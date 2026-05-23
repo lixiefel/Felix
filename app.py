@@ -164,7 +164,7 @@ def _init_state():
         "email_submitted": False,
         "pending_email": "",
         "num_items": 6,
-        "items": [_blank_item() for _ in range(30)],
+        "menu_items": [_blank_item() for _ in range(30)],
         "show_comp": False,
         "settings": {
             "currency": "USD", "round_to": 0.10, "ending": ".00",
@@ -178,9 +178,9 @@ def _init_state():
         if k not in st.session_state:
             st.session_state[k] = v
     # Defensive: ensure items list is exactly 30 entries
-    if not isinstance(st.session_state.items, list) or len(st.session_state.items) < 30:
-        existing = st.session_state.items if isinstance(st.session_state.items, list) else []
-        st.session_state.items = existing + [_blank_item() for _ in range(30 - len(existing))]
+    if not isinstance(st.session_state.menu_items, list) or len(st.session_state.menu_items) < 30:
+        existing = st.session_state.menu_items if isinstance(st.session_state.menu_items, list) else []
+        st.session_state.menu_items = existing + [_blank_item() for _ in range(30 - len(existing))]
 
 _init_state()
 
@@ -318,13 +318,18 @@ with tab_input:
 
     n_items = st.session_state.num_items
     for i in range(n_items):
-        # Defensive: extend items list if somehow shorter than n_items
-        while len(st.session_state.items) <= i:
-            st.session_state.items.append(_blank_item())
-        item = st.session_state.items[i]
-        if not isinstance(item, dict):
-            item = _blank_item()
-            st.session_state.items[i] = item
+        # Defensive: try to access; if it fails, rebuild the slot
+        try:
+            item = st.session_state.menu_items[i]
+            if not isinstance(item, dict):
+                raise ValueError("not a dict")
+        except (IndexError, ValueError, TypeError, KeyError):
+            # Rebuild the entire items list to be safe
+            current = list(st.session_state.menu_items) if hasattr(st.session_state, "menu_items") else []
+            while len(current) < 30:
+                current.append(_blank_item())
+            st.session_state.menu_items = current
+            item = st.session_state.menu_items[i]
         c1, c2, c3, c4, c5, c6 = st.columns([3, 2, 2, 1.5, 1.5, 1.5])
         with c1:
             item["name"] = st.text_input(f"name_{i}", value=item["name"],
@@ -344,7 +349,7 @@ with tab_input:
         with c6:
             item["monthly_units"] = st.number_input(f"units_{i}", min_value=0, value=int(item["monthly_units"]),
                 step=50, label_visibility="collapsed")
-        st.session_state.items[i] = item
+        st.session_state.menu_items[i] = item
 
     # Add/remove item buttons
     btn_c1, btn_c2, _ = st.columns([1, 1, 7])
@@ -366,12 +371,16 @@ with tab_input:
         h2cols[2].markdown("**Competitor 2**")
         h2cols[3].markdown("**Competitor 3**")
         for i in range(n_items):
-            while len(st.session_state.items) <= i:
-                st.session_state.items.append(_blank_item())
-            item = st.session_state.items[i]
-            if not isinstance(item, dict):
-                item = _blank_item()
-                st.session_state.items[i] = item
+            try:
+                item = st.session_state.menu_items[i]
+                if not isinstance(item, dict):
+                    raise ValueError("not a dict")
+            except (IndexError, ValueError, TypeError, KeyError):
+                current = list(st.session_state.menu_items) if hasattr(st.session_state, "menu_items") else []
+                while len(current) < 30:
+                    current.append(_blank_item())
+                st.session_state.menu_items = current
+                item = st.session_state.menu_items[i]
             name_disp = item["name"] or f"Item {i+1}"
             cc1, cc2, cc3, cc4 = st.columns([3, 1.5, 1.5, 1.5])
             cc1.write(name_disp)
@@ -381,7 +390,7 @@ with tab_input:
                 label_visibility="collapsed", placeholder="—")
             item["comp3"] = cc4.text_input(f"cp3_{i}", value=str(item["comp3"]),
                 label_visibility="collapsed", placeholder="—")
-            st.session_state.items[i] = item
+            st.session_state.menu_items[i] = item
 
     # ── Run button ─────────────────────────────────────────────────────────────
     st.markdown("---")
@@ -391,7 +400,7 @@ with tab_input:
 
     if run_clicked:
         # Gather active items (name must be filled)
-        items_raw = [st.session_state.items[i] for i in range(n_items)]
+        items_raw = [st.session_state.menu_items[i] for i in range(n_items)]
         active_items = [it for it in items_raw if it["name"].strip()]
 
         if not active_items:
