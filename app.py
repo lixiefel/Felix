@@ -149,6 +149,11 @@ def _action_span(action: str) -> str:
 
 # ── session state init ─────────────────────────────────────────────────────────
 
+def _blank_item():
+    return {"name": "", "category": "Coffee", "role": "Core",
+            "cost": 0.0, "price": 0.0, "monthly_units": 0,
+            "comp1": "", "comp2": "", "comp3": ""}
+
 def _init_state():
     defaults = {
         "mode": "Quick Audit",
@@ -159,12 +164,7 @@ def _init_state():
         "email_submitted": False,
         "pending_email": "",
         "num_items": 6,
-        "items": [
-            {"name": "", "category": "Coffee", "role": "Core",
-             "cost": 0.0, "price": 0.0, "monthly_units": 0,
-             "comp1": "", "comp2": "", "comp3": ""}
-            for _ in range(30)
-        ],
+        "items": [_blank_item() for _ in range(30)],
         "show_comp": False,
         "settings": {
             "currency": "USD", "round_to": 0.10, "ending": ".00",
@@ -177,6 +177,10 @@ def _init_state():
     for k, v in defaults.items():
         if k not in st.session_state:
             st.session_state[k] = v
+    # Defensive: ensure items list is exactly 30 entries
+    if not isinstance(st.session_state.items, list) or len(st.session_state.items) < 30:
+        existing = st.session_state.items if isinstance(st.session_state.items, list) else []
+        st.session_state.items = existing + [_blank_item() for _ in range(30 - len(existing))]
 
 _init_state()
 
@@ -314,7 +318,13 @@ with tab_input:
 
     n_items = st.session_state.num_items
     for i in range(n_items):
+        # Defensive: extend items list if somehow shorter than n_items
+        while len(st.session_state.items) <= i:
+            st.session_state.items.append(_blank_item())
         item = st.session_state.items[i]
+        if not isinstance(item, dict):
+            item = _blank_item()
+            st.session_state.items[i] = item
         c1, c2, c3, c4, c5, c6 = st.columns([3, 2, 2, 1.5, 1.5, 1.5])
         with c1:
             item["name"] = st.text_input(f"name_{i}", value=item["name"],
@@ -356,7 +366,12 @@ with tab_input:
         h2cols[2].markdown("**Competitor 2**")
         h2cols[3].markdown("**Competitor 3**")
         for i in range(n_items):
+            while len(st.session_state.items) <= i:
+                st.session_state.items.append(_blank_item())
             item = st.session_state.items[i]
+            if not isinstance(item, dict):
+                item = _blank_item()
+                st.session_state.items[i] = item
             name_disp = item["name"] or f"Item {i+1}"
             cc1, cc2, cc3, cc4 = st.columns([3, 1.5, 1.5, 1.5])
             cc1.write(name_disp)
