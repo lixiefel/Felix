@@ -16,6 +16,7 @@ from engine import (
 )
 from db import save_submission, get_all_submissions, get_submission_inputs
 from pdf_report import generate_pdf, generate_html_report
+from email_send import send_consultant_notification, send_owner_confirmation, _is_configured as _email_configured
 
 # ── page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -461,6 +462,24 @@ with tab_input:
                         items=item_inputs,
                         audit=result,
                     )
+                    # Send consultant notification (test send to Felix)
+                    if _email_configured():
+                        try:
+                            app_url_for_email = "https://share.streamlit.io"
+                            ok, err = send_consultant_notification(
+                                owner_email="(consultant test run)",
+                                currency=s["currency"],
+                                items=item_inputs,
+                                audit=result,
+                                app_url=app_url_for_email,
+                                excel_path=result.excel_path,
+                            )
+                            if ok:
+                                st.info("📧 Consultant notification email sent.")
+                            else:
+                                st.warning(f"Email not sent: {err}")
+                        except Exception as e:
+                            st.warning(f"Email error: {e}")
                 st.success("✓ Audit complete! Switch to the Results tab.")
 
 
@@ -498,6 +517,28 @@ with tab_results:
                         items=items_for_db,
                         audit=audit,
                     )
+                    # Fire both emails: lead alert to Felix, thank-you to owner
+                    if _email_configured():
+                        try:
+                            pdf_bytes_for_email = generate_pdf(audit, currency, cafe_name)
+                            app_url_for_email = "https://share.streamlit.io"
+                            send_consultant_notification(
+                                owner_email=email_val,
+                                currency=currency,
+                                items=items_for_db,
+                                audit=audit,
+                                app_url=app_url_for_email,
+                                excel_path=audit.excel_path,
+                            )
+                            send_owner_confirmation(
+                                owner_email=email_val,
+                                cafe_name=cafe_name,
+                                currency=currency,
+                                audit=audit,
+                                pdf_bytes=pdf_bytes_for_email,
+                            )
+                        except Exception:
+                            pass  # never block the user flow on email failure
                     st.rerun()
                 else:
                     st.error("Please enter a valid email address.")
