@@ -214,3 +214,4 @@ def t(key: str, lang: str = "en") -> str:
     if not entry:
         return key  # show the raw key if we forgot to translate — visible bug, easy to find
     return entry.get(lang) or entry.get("en") or key
+
