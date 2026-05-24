@@ -12,6 +12,8 @@ import os
 import base64
 from datetime import datetime, timedelta
 
+from i18n import t
+
 try:
     import streamlit as st
     HAS_STREAMLIT = True
@@ -181,108 +183,97 @@ def _build_consultant_html(*, owner_email, cafe_name, currency, items, audit, ap
 </html>"""
 
 
-def _build_owner_html(*, cafe_name, currency, audit, calendly_url):
+def _build_owner_html(*, cafe_name, currency, audit, calendly_url, lang="en"):
     lift_sign = "+" if audit.monthly_lift >= 0 else ""
     lift_str = f"{lift_sign}{_fmt_currency(audit.monthly_lift, currency)} {currency}"
     pct_str = f"{'+' if audit.lift_pct >= 0 else ''}{audit.lift_pct*100:.1f}%"
-    name_part = cafe_name.strip() if cafe_name and cafe_name.strip() else "your café"
+    default_cafe = t("success_default_cafe", lang)
+    name_part = cafe_name.strip() if cafe_name and cafe_name.strip() else default_cafe
 
     return f"""
 <!DOCTYPE html>
 <html>
 <body style="font-family:Arial,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:20px">
-  <div style="background:#1F3864;color:white;padding:20px;border-radius:8px;text-align:center">
-    <h1 style="margin:0;font-size:24px">Your MarginLab Pricing Audit</h1>
-    <p style="margin:6px 0 0;opacity:0.85;font-size:14px">for {name_part}</p>
+  <div style="background:#0F1A2E;color:#FAF7F2;padding:20px;border-radius:8px;text-align:center">
+    <h1 style="margin:0;font-size:24px">{t("email_owner_h1", lang)}</h1>
+    <p style="margin:6px 0 0;opacity:0.85;font-size:14px">{t("email_owner_for", lang)} {name_part}</p>
   </div>
 
-  <p style="margin-top:24px;font-size:15px">Hi,</p>
+  <p style="margin-top:24px;font-size:15px">{t("email_owner_hi", lang)}</p>
 
   <p style="font-size:15px;line-height:1.5">
-    Thanks for running a MarginLab pricing audit. Your full report is attached as a PDF —
-    open it on your phone, your laptop, or forward it to your accountant.
+    {t("email_owner_p1", lang)}
   </p>
 
-  <div style="background:#f4f6f9;border-radius:8px;padding:20px;text-align:center;margin:24px 0">
-    <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.5px">Potential monthly profit gain</div>
-    <div style="font-size:32px;font-weight:800;color:#1F3864;margin-top:4px">{lift_str}</div>
-    <div style="font-size:13px;color:#666;margin-top:2px">{pct_str} versus your current pricing</div>
+  <div style="background:#F2EDE3;border-radius:8px;padding:20px;text-align:center;margin:24px 0">
+    <div style="font-size:11px;color:#9A7842;text-transform:uppercase;letter-spacing:0.5px">{t("email_owner_metric", lang)}</div>
+    <div style="font-size:32px;font-weight:800;color:#0F1A2E;margin-top:4px">{lift_str}</div>
+    <div style="font-size:13px;color:#666;margin-top:2px">{pct_str} {t("email_owner_metric_sub", lang)}</div>
   </div>
 
   <p style="font-size:14px;line-height:1.6;color:#444">
-    These recommendations come from a profit-maximizing pricing model that accounts for
-    each item's role on your menu, its category, and demand sensitivity. The PDF shows the
-    full breakdown — item by item, with Star / Plowhorse / Puzzle / Dog classification and
-    a plain-language narrative for each move.
+    {t("email_owner_p2", lang)}
   </p>
 
   <p style="font-size:14px;line-height:1.6;color:#444">
-    <strong>Want help implementing this?</strong> Reply to this email or grab a free
-    15-min walkthrough: <a href="{calendly_url}" style="color:#1F3864">{calendly_url}</a>
+    {t("email_owner_p3", lang)} <a href="{calendly_url}" style="color:#0F1A2E">{calendly_url}</a>
   </p>
 
-  <p style="font-size:14px;margin-top:24px">— Felix · MarginLab</p>
+  <p style="font-size:14px;margin-top:24px">{t("email_owner_signoff", lang)}</p>
 
   <div style="margin-top:32px;padding-top:14px;border-top:1px solid #ddd;font-size:11px;color:#999;text-align:center">
-    You received this because you ran a free pricing audit at MarginLab.<br>
-    Powered by Lerner-optimal pricing economics.
+    {t("email_owner_footer", lang)}
   </div>
 </body>
 </html>"""
 
 
-def _build_followup1_html(*, cafe_name, calendly_url):
-    name_part = cafe_name.strip() if cafe_name and cafe_name.strip() else "there"
+def _build_followup1_html(*, cafe_name, calendly_url, lang="en"):
+    name_part = cafe_name.strip() if cafe_name and cafe_name.strip() else ("there" if lang == "en" else "halo")
     return f"""
 <!DOCTYPE html>
 <html>
 <body style="font-family:Arial,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:20px">
-  <p style="font-size:15px">Hi {name_part},</p>
+  <p style="font-size:15px">{t("email_f1_greeting", lang).format(name=name_part)}</p>
 
   <p style="font-size:15px;line-height:1.6">
-    Hope your MarginLab audit was useful. Quick note from experience:
+    {t("email_f1_p1", lang)}
   </p>
 
   <p style="font-size:15px;line-height:1.6">
-    The numbers in your PDF assume you change prices in <em>one</em> cycle. Most cafés get
-    better results <strong>sequencing</strong> the changes — start with the single
-    highest-confidence raise, hold for two weeks, measure traffic and revenue, then move
-    to the next.
+    {t("email_f1_p2", lang)}
   </p>
 
   <p style="font-size:15px;line-height:1.6">
-    Happy to walk you through a sequencing plan tailored to your menu on a 15-min call:<br>
-    <a href="{calendly_url}" style="color:#1F3864;font-weight:600">{calendly_url}</a>
+    {t("email_f1_p3", lang)}<br>
+    <a href="{calendly_url}" style="color:#0F1A2E;font-weight:600">{calendly_url}</a>
   </p>
 
   <p style="font-size:15px;margin-top:20px">— Felix</p>
 
   <div style="margin-top:32px;padding-top:14px;border-top:1px solid #ddd;font-size:11px;color:#999;text-align:center">
-    MarginLab Pricing Lab · sequenced pricing advice
+    MarginLab Pricing Lab
   </div>
 </body>
 </html>"""
 
 
-def _build_followup2_html(*, cafe_name):
-    name_part = cafe_name.strip() if cafe_name and cafe_name.strip() else "there"
+def _build_followup2_html(*, cafe_name, lang="en"):
+    name_part = cafe_name.strip() if cafe_name and cafe_name.strip() else ("there" if lang == "en" else "halo")
     return f"""
 <!DOCTYPE html>
 <html>
 <body style="font-family:Arial,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:20px">
-  <p style="font-size:15px">Hi {name_part},</p>
+  <p style="font-size:15px">{t("email_f1_greeting", lang).format(name=name_part)}</p>
 
-  <p style="font-size:15px;line-height:1.6">One more thing about your pricing:</p>
+  <p style="font-size:15px;line-height:1.6">{t("email_f2_p1", lang)}</p>
 
   <p style="font-size:15px;line-height:1.6">
-    Most café owners I talk to <strong>underprice their signature items by 15–20%</strong>
-    and <strong>overprice their traffic drivers by 5–10%</strong>. If your audit flagged
-    something that surprised you, that's usually why.
+    {t("email_f2_p2", lang)}
   </p>
 
   <p style="font-size:15px;line-height:1.6">
-    Reply if you want to talk it through — happy to look at your specific numbers and
-    tell you what I'd do.
+    {t("email_f2_p3", lang)}
   </p>
 
   <p style="font-size:15px;margin-top:20px">— Felix</p>
@@ -342,7 +333,7 @@ def send_consultant_notification(*, owner_email, currency, items, audit, app_url
     )
 
 
-def send_owner_confirmation(*, owner_email, cafe_name, currency, audit, pdf_bytes=None):
+def send_owner_confirmation(*, owner_email, cafe_name, currency, audit, pdf_bytes=None, lang="en"):
     if not owner_email or "@" not in owner_email:
         return False, "Invalid owner email"
 
@@ -356,17 +347,17 @@ def send_owner_confirmation(*, owner_email, cafe_name, currency, audit, pdf_byte
         except Exception:
             pass
 
-    subject = f"Your MarginLab pricing audit · {audit.monthly_lift:+,.0f} {currency}/mo opportunity"
+    subject = f"{t('email_owner_subject', lang)} · {audit.monthly_lift:+,.0f} {currency}/mo"
     html = _build_owner_html(
         cafe_name=cafe_name, currency=currency, audit=audit,
-        calendly_url=_calendly_url(),
+        calendly_url=_calendly_url(), lang=lang,
     )
     return _send_with_resend(
         to_email=owner_email, subject=subject, html=html, attachments=attachments,
     )
 
 
-def schedule_followups(*, owner_email, cafe_name) -> dict:
+def schedule_followups(*, owner_email, cafe_name, lang="en") -> dict:
     """
     Schedule the two follow-up emails via Resend's `scheduled_at`.
     Returns dict {1: (ok, err), 2: (ok, err)}.
@@ -376,21 +367,22 @@ def schedule_followups(*, owner_email, cafe_name) -> dict:
         return {1: (False, "Invalid email"), 2: (False, "Invalid email")}
 
     cal = _calendly_url()
-    name_first_word = (cafe_name.split()[0] if cafe_name and cafe_name.split() else "there")
+    default_name = "there" if lang == "en" else "halo"
+    name_first_word = (cafe_name.split()[0] if cafe_name and cafe_name.split() else default_name)
 
     send_at_1 = (datetime.utcnow() + timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
     results[1] = _send_with_resend(
         to_email=owner_email,
-        subject=f"Following up on your MarginLab audit, {name_first_word}",
-        html=_build_followup1_html(cafe_name=cafe_name, calendly_url=cal),
+        subject=t("email_f1_subject", lang).format(name=name_first_word),
+        html=_build_followup1_html(cafe_name=cafe_name, calendly_url=cal, lang=lang),
         scheduled_at=send_at_1,
     )
 
     send_at_2 = (datetime.utcnow() + timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
     results[2] = _send_with_resend(
         to_email=owner_email,
-        subject="One more thing about your pricing",
-        html=_build_followup2_html(cafe_name=cafe_name),
+        subject=t("email_f2_subject", lang),
+        html=_build_followup2_html(cafe_name=cafe_name, lang=lang),
         scheduled_at=send_at_2,
     )
 
