@@ -50,204 +50,747 @@ st.set_page_config(
 
 # ── CSS ────────────────────────────────────────────────────────────────────────
 st.markdown("""
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-  /* ── Global ─────────────────────────────────────────────── */
-  html, body, [class*="css"] {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+  /* ════════════════════════════════════════════════════════════════
+     MARGINLAB · Design System v3
+     Premium-but-warm: ink navy, cream, single ochre accent
+     ════════════════════════════════════════════════════════════════ */
+
+  :root {
+    --ink:        #0F1A2E;
+    --ink-soft:   #1F2A40;
+    --ink-mid:    #3D4862;
+    --slate:      #6B7588;
+    --slate-soft: #9AA3B5;
+    --line:       #E5E0D4;
+    --line-soft:  #EFEAE0;
+    --cream:      #FAF7F2;
+    --cream-deep: #F2EDE3;
+    --paper:      #FDFCF9;
+    --ochre:      #B8935C;
+    --ochre-deep: #9A7842;
+    --ochre-soft: #E8DCC4;
+    --green:      #4A6B4A;
+    --green-soft: #DDE6DC;
+    --rust:       #9C4A3C;
+    --rust-soft:  #F0D9D4;
+
+    --shadow-sm: 0 1px 2px rgba(15, 26, 46, 0.04);
+    --shadow:    0 2px 6px rgba(15, 26, 46, 0.06), 0 1px 2px rgba(15, 26, 46, 0.04);
+    --shadow-lg: 0 12px 32px rgba(15, 26, 46, 0.08), 0 4px 12px rgba(15, 26, 46, 0.04);
   }
+
+  /* ── App-wide reset ────────────────────────────────────────── */
+  .stApp {
+    background: var(--cream) !important;
+  }
+
+  html, body, [class*="css"], .stMarkdown, p, span, div, button, input, label {
+    font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+
+  /* Streamlit chrome */
   footer { display: none !important; }
-  #MainMenu { visibility: hidden; }
-
-  /* ── App header (consultant + owner audit) ────────────────── */
-  .ml-header {
-    background: linear-gradient(135deg, #1F3864 0%, #2d5090 100%);
-    color: white;
-    padding: 18px 24px 12px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+  #MainMenu { visibility: hidden !important; }
+  header[data-testid="stHeader"] { background: transparent !important; }
+  .block-container {
+    padding-top: 1rem !important;
+    padding-bottom: 4rem !important;
+    max-width: 1180px !important;
   }
-  .ml-header h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
-  .ml-header p  { margin: 4px 0 0; opacity: 0.85; font-size: 13px; }
 
-  /* ── Landing hero ─────────────────────────────────────────── */
-  .landing-hero {
-    text-align: center;
-    padding: 60px 20px 30px;
-    max-width: 720px;
+  /* ── Typography ───────────────────────────────────────────── */
+  h1, h2, h3, h4, .serif {
+    font-family: "Fraunces", "Times New Roman", Georgia, serif !important;
+    font-feature-settings: "ss01", "ss02";
+    letter-spacing: -0.02em;
+  }
+  .mono {
+    font-family: "JetBrains Mono", "SF Mono", Menlo, monospace !important;
+  }
+
+  /* ────────────────────────────────────────────────────────────
+     LANDING PAGE
+     ──────────────────────────────────────────────────────────── */
+
+  .landing-wrap {
+    max-width: 1080px;
     margin: 0 auto;
+    padding: 24px 32px 80px;
   }
-  .landing-hero .eyebrow {
-    color: #1F3864;
+
+  /* Top nav bar */
+  .landing-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 0 32px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 64px;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-mark {
+    width: 28px; height: 28px;
+    background: var(--ink); color: var(--cream);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Fraunces", serif !important;
+    font-weight: 700; font-size: 16px;
+    font-style: italic;
+  }
+  .nav-name {
+    font-family: "Fraunces", serif !important;
+    font-weight: 600; font-size: 18px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .nav-tagline {
+    color: var(--slate);
     font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Hero */
+  .landing-hero {
+    text-align: left;
+    max-width: 760px;
+    margin: 0 0 80px;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center; gap: 10px;
+    color: var(--ochre-deep);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-bottom: 12px;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow::before {
+    content: "";
+    width: 24px; height: 1px;
+    background: var(--ochre);
   }
   .landing-hero h1 {
-    font-size: 48px;
-    font-weight: 800;
-    color: #1A1A2E;
-    letter-spacing: -1.5px;
-    line-height: 1.1;
-    margin: 0 0 16px;
+    font-size: clamp(40px, 6vw, 68px);
+    line-height: 1.02;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 28px;
+    letter-spacing: -0.025em;
   }
-  .landing-hero h1 .accent { color: #1F3864; }
-  .landing-hero p.sub {
-    font-size: 18px;
-    color: #545B6E;
-    line-height: 1.5;
-    margin: 0 0 32px;
+  .landing-hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ochre-deep);
   }
-  /* Big CTA button styling targeted at the streamlit primary button */
-  .stButton > button[kind="primary"] {
-    background: #1F3864 !important;
-    color: white !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    padding: 12px 32px !important;
-    border-radius: 8px !important;
-    border: none !important;
-    box-shadow: 0 4px 14px rgba(31,56,100,0.25) !important;
+  .landing-hero .sub {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink-mid);
+    margin: 0 0 36px;
+    max-width: 580px;
+    font-family: "Geist", sans-serif !important;
+    font-weight: 400;
   }
-  .stButton > button[kind="primary"]:hover {
-    background: #2d5090 !important;
-    box-shadow: 0 6px 20px rgba(31,56,100,0.35) !important;
-  }
-
-  /* ── How it works section ────────────────────────────────── */
-  .how-section {
-    max-width: 960px;
-    margin: 40px auto;
-    padding: 0 20px;
-  }
-  .how-section h2 {
-    text-align: center;
-    color: #1A1A2E;
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 32px;
-    letter-spacing: -0.5px;
-  }
-  .how-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-  .how-card {
-    background: white;
-    border: 1px solid #e0e6f0;
-    border-radius: 12px;
-    padding: 24px;
-    text-align: center;
-  }
-  .how-card .step-num {
-    width: 36px; height: 36px;
-    background: #1F3864; color: white;
-    border-radius: 50%;
-    display: inline-flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 16px; margin-bottom: 12px;
-  }
-  .how-card h3 { margin: 4px 0 6px; font-size: 16px; color: #1A1A2E; }
-  .how-card p  { margin: 0; font-size: 13px; color: #6b7280; line-height: 1.5; }
-
-  /* ── Example/proof block ────────────────────────────────── */
-  .proof-section {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 32px;
-    background: #f4f6f9;
-    border-radius: 12px;
-    text-align: center;
-  }
-  .proof-section .metric-row {
-    display: flex; justify-content: center; gap: 32px;
-    margin: 16px 0 8px;
+  .hero-bullets {
+    display: flex; gap: 28px;
+    font-size: 13px; color: var(--slate);
+    margin-top: 24px;
     flex-wrap: wrap;
   }
-  .proof-metric .label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
-  .proof-metric .value { font-size: 28px; font-weight: 800; color: #1F3864; }
-  .proof-section p.note { font-size: 12px; color: #6b7280; margin-top: 8px; font-style: italic; }
+  .hero-bullets span {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-bullets span::before {
+    content: "·"; color: var(--ochre); font-size: 18px;
+  }
+  .hero-bullets span:first-child::before { content: none; }
 
-  /* ── Who block ──────────────────────────────────────────── */
+  /* CTA buttons — override Streamlit button */
+  .stButton > button {
+    font-family: "Geist", sans-serif !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.005em !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--line) !important;
+    background: var(--paper) !important;
+    color: var(--ink) !important;
+    transition: all 0.18s ease !important;
+    padding: 10px 20px !important;
+    box-shadow: var(--shadow-sm) !important;
+  }
+  .stButton > button:hover {
+    border-color: var(--ink) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow) !important;
+  }
+  .stButton > button[kind="primary"] {
+    background: var(--ink) !important;
+    color: var(--cream) !important;
+    border: 1px solid var(--ink) !important;
+    font-weight: 500 !important;
+    padding: 14px 28px !important;
+    font-size: 15px !important;
+    box-shadow: var(--shadow) !important;
+  }
+  .stButton > button[kind="primary"]:hover {
+    background: var(--ink-soft) !important;
+    border-color: var(--ink-soft) !important;
+    box-shadow: var(--shadow-lg) !important;
+  }
+
+  /* How it works */
+  .section-divider {
+    display: flex; align-items: center; gap: 16px;
+    margin: 64px 0 32px;
+  }
+  .section-divider .label {
+    font-family: "Fraunces", serif !important;
+    font-style: italic; font-weight: 500;
+    color: var(--ink); font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+  .section-divider .line {
+    flex: 1; height: 1px; background: var(--line);
+  }
+  .section-divider .index {
+    font-family: "JetBrains Mono", monospace !important;
+    color: var(--slate-soft); font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .how-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .how-card {
+    background: var(--paper);
+    padding: 32px 28px;
+    transition: background 0.2s;
+  }
+  .how-card:hover { background: var(--cream); }
+  .how-step {
+    font-family: "Fraunces", serif !important;
+    font-style: italic; font-weight: 500;
+    font-size: 32px;
+    color: var(--ochre);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .how-card h3 {
+    font-size: 18px; font-weight: 600;
+    color: var(--ink); margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .how-card p {
+    font-size: 13.5px; line-height: 1.55;
+    color: var(--ink-mid); margin: 0;
+  }
+
+  /* Proof panel */
+  .proof-panel {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 16px;
+    padding: 48px;
+    margin: 64px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .proof-panel::before {
+    content: "";
+    position: absolute; top: 0; right: 0;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, var(--ochre) 0%, transparent 70%);
+    opacity: 0.12;
+    transform: translate(40%, -40%);
+  }
+  .proof-panel .pp-label {
+    font-family: "JetBrains Mono", monospace !important;
+    font-size: 11px; letter-spacing: 0.14em;
+    color: var(--ochre);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .proof-panel h2 {
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 32px;
+    margin: 0 0 32px;
+    letter-spacing: -0.015em;
+    color: var(--cream);
+  }
+  .proof-panel h2 em {
+    color: var(--ochre); font-style: italic; font-weight: 400;
+  }
+  .pp-metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    border-top: 1px solid rgba(232, 220, 196, 0.18);
+    padding-top: 28px;
+  }
+  .pp-metric .label {
+    font-family: "JetBrains Mono", monospace !important;
+    font-size: 10px; letter-spacing: 0.12em;
+    color: var(--slate-soft);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .pp-metric .val {
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 34px;
+    color: var(--cream);
+    letter-spacing: -0.02em;
+  }
+  .pp-metric .val em {
+    color: var(--ochre); font-style: italic; font-weight: 400;
+  }
+  .proof-panel .note {
+    margin-top: 24px;
+    font-size: 12px; color: var(--slate-soft);
+    font-style: italic;
+  }
+
+  /* Who block */
   .who-section {
-    max-width: 720px; margin: 40px auto; padding: 0 20px;
-    text-align: center; color: #545B6E; font-size: 15px; line-height: 1.6;
+    max-width: 720px;
+    margin: 64px auto;
+    padding: 0;
   }
   .who-section h2 {
-    color: #1A1A2E; font-size: 22px; margin-bottom: 12px; font-weight: 700;
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 28px;
+    color: var(--ink); margin: 0 0 20px;
+    letter-spacing: -0.015em;
+  }
+  .who-section h2 em {
+    color: var(--ochre-deep); font-style: italic;
+  }
+  .who-section p {
+    font-size: 16px; line-height: 1.65;
+    color: var(--ink-mid);
+    margin: 0;
+  }
+  .who-section strong { color: var(--ink); font-weight: 600; }
+
+  /* Bottom CTA strip */
+  .cta-strip {
+    text-align: center;
+    margin: 64px 0 32px;
+    padding: 48px;
+    background: var(--cream-deep);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+  }
+  .cta-strip h3 {
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 26px;
+    color: var(--ink); margin: 0 0 8px;
+    letter-spacing: -0.015em;
+  }
+  .cta-strip p {
+    font-size: 14px; color: var(--ink-mid);
+    margin: 0 0 24px;
   }
 
-  /* ── Footer ─────────────────────────────────────────────── */
+  /* Footer */
   .landing-footer {
-    margin-top: 60px; padding: 24px 20px 12px;
-    border-top: 1px solid #e0e6f0;
+    margin-top: 60px; padding: 32px 0 16px;
+    border-top: 1px solid var(--line);
     text-align: center;
-    color: #9aa5b8;
-    font-size: 12px;
+  }
+  .landing-footer .row1 {
+    font-size: 13px; color: var(--ink-mid);
+    margin-bottom: 8px;
+  }
+  .landing-footer a {
+    color: var(--ochre-deep); text-decoration: none;
+    border-bottom: 1px solid var(--ochre-soft);
+    transition: border-color 0.2s;
+  }
+  .landing-footer a:hover { border-color: var(--ochre-deep); }
+  .landing-footer .row2 {
+    font-size: 11px; color: var(--slate-soft);
+    margin-top: 12px;
+    font-style: italic;
   }
 
-  /* ── Metric cards (results page, consultant only) ────────── */
-  .metric-card {
-    background: white;
-    border: 1px solid #e0e6f0;
-    border-radius: 10px;
-    padding: 16px 18px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(31,56,100,0.06);
+  /* ────────────────────────────────────────────────────────────
+     AUDIT FORM
+     ──────────────────────────────────────────────────────────── */
+
+  .form-wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 16px 24px 80px;
   }
-  .metric-card .label { font-size: 10px; color: #7a8599; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-  .metric-card .value { font-size: 26px; font-weight: 800; color: #1F3864; }
-  .metric-card .sub   { font-size: 11px; color: #9aa5b8; margin-top: 2px; }
+
+  /* App header (consultant + owner audit pages) */
+  .ml-header {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ml-header::before {
+    content: "";
+    position: absolute; top: -40%; right: -10%;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, var(--ochre) 0%, transparent 70%);
+    opacity: 0.10;
+  }
+  .ml-header .eyebrow {
+    font-family: "JetBrains Mono", monospace !important;
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 8px;
+  }
+  .ml-header h1 {
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 30px;
+    color: var(--cream); margin: 0 0 6px;
+    letter-spacing: -0.015em;
+  }
+  .ml-header h1 em { color: var(--ochre); font-style: italic; font-weight: 400; }
+  .ml-header p {
+    margin: 0; font-size: 14px; color: var(--slate-soft);
+    max-width: 580px;
+  }
+
+  /* Form section blocks (1 / 2 / 3) */
+  .form-section {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .form-section-head {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .form-section-num {
+    font-family: "Fraunces", serif !important;
+    font-style: italic; font-weight: 500;
+    font-size: 22px;
+    color: var(--ochre);
+    line-height: 1;
+  }
+  .form-section-title {
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 22px;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    line-height: 1;
+  }
+  .form-section-desc {
+    font-size: 13.5px; color: var(--ink-mid);
+    margin: 14px 0 22px;
+    line-height: 1.5;
+  }
+
+  /* Style Streamlit inputs to match */
+  .stTextInput input, .stNumberInput input, .stSelectbox > div > div {
+    background: var(--cream) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 7px !important;
+    color: var(--ink) !important;
+    font-family: "Geist", sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    transition: border-color 0.18s, box-shadow 0.18s !important;
+  }
+  .stTextInput input:focus, .stNumberInput input:focus {
+    border-color: var(--ochre) !important;
+    box-shadow: 0 0 0 3px var(--ochre-soft) !important;
+    background: var(--paper) !important;
+  }
+  .stSelectbox > div > div:focus-within {
+    border-color: var(--ochre) !important;
+    box-shadow: 0 0 0 3px var(--ochre-soft) !important;
+  }
+
+  /* Labels in form */
+  .stTextInput label, .stNumberInput label, .stSelectbox label, .stCheckbox label {
+    font-family: "Geist", sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 12.5px !important;
+    color: var(--ink-mid) !important;
+    letter-spacing: 0.01em;
+  }
+
+  /* Menu table headers */
+  .menu-table-head {
+    display: grid;
+    grid-template-columns: 2.5fr 1.5fr 1.5fr 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 0 4px 10px;
+    border-bottom: 1px solid var(--line-soft);
+    margin-bottom: 6px;
+  }
+  .menu-table-head span {
+    font-family: "JetBrains Mono", monospace !important;
+    font-size: 10px; letter-spacing: 0.12em;
+    color: var(--slate);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* Each row has subtle alternating shading via item-row class wrapper */
+  div[data-testid="stHorizontalBlock"] {
+    align-items: center;
+    padding: 6px 0;
+  }
+
+  /* Tighten the number input + buttons so they don't dominate */
+  .stNumberInput > div > div { gap: 4px !important; }
+
+  /* Checkbox styling */
+  .stCheckbox {
+    background: var(--cream);
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 8px;
+  }
+  .stCheckbox label p {
+    font-size: 13.5px !important;
+    color: var(--ink-mid) !important;
+  }
+
+  /* Email field gets distinct treatment in the third section */
+  .email-callout {
+    background: var(--cream);
+    border: 1px solid var(--ochre-soft);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 8px;
+  }
+
+  /* Expander (competitor prices) */
+  .streamlit-expanderHeader, [data-testid="stExpander"] summary {
+    background: var(--cream) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-family: "Geist", sans-serif !important;
+    font-weight: 500 !important;
+    color: var(--ink) !important;
+    font-size: 14px !important;
+  }
+
+  /* Run button — extra emphasis */
+  .submit-row {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  /* Success card (owner-after-submit) */
+  .owner-success-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 56px 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 24px auto;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .owner-success-card::before {
+    content: "";
+    position: absolute; top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 4px;
+    background: var(--ochre);
+    border-radius: 0 0 8px 8px;
+  }
+  .success-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto 20px;
+    background: var(--ochre-soft);
+    color: var(--ochre-deep);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Fraunces", serif !important;
+    font-size: 28px; font-style: italic;
+  }
+  .owner-success-card h2 {
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 28px;
+    color: var(--ink); margin: 0 0 10px;
+    letter-spacing: -0.015em;
+  }
+  .owner-success-card .lede {
+    font-size: 15px; color: var(--ink-mid);
+    margin: 0 0 32px; line-height: 1.5;
+  }
+  .owner-success-card .lede strong { color: var(--ink); font-weight: 600; }
+
+  .success-metric {
+    background: var(--cream-deep);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 0 auto 24px;
+    max-width: 380px;
+  }
+  .success-metric .label {
+    font-family: "JetBrains Mono", monospace !important;
+    font-size: 10px; letter-spacing: 0.14em;
+    color: var(--ochre-deep); text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .success-metric .big-number {
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 48px;
+    color: var(--ink);
+    letter-spacing: -0.025em;
+    line-height: 1;
+    margin: 4px 0;
+  }
+  .success-metric .big-number em { color: var(--ochre-deep); font-style: italic; font-weight: 400; }
+  .success-metric .sub {
+    font-size: 13px; color: var(--ink-mid);
+    margin-top: 4px;
+  }
+
+  .owner-success-card .next-note {
+    font-size: 13px; color: var(--slate);
+    line-height: 1.6;
+    margin-top: 20px;
+  }
+  .owner-success-card .next-note a {
+    color: var(--ochre-deep);
+    border-bottom: 1px solid var(--ochre-soft);
+    text-decoration: none;
+  }
+
+  /* ────────────────────────────────────────────────────────────
+     CONSULTANT VIEW
+     ──────────────────────────────────────────────────────────── */
+
+  /* Tabs */
+  .stTabs [data-baseweb="tab-list"] {
+    gap: 4px;
+    border-bottom: 1px solid var(--line) !important;
+    margin-bottom: 24px;
+  }
+  .stTabs [data-baseweb="tab"] {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 12px 16px !important;
+    color: var(--slate) !important;
+    font-family: "Geist", sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 13.5px !important;
+  }
+  .stTabs [aria-selected="true"] {
+    color: var(--ink) !important;
+    border-bottom: 2px solid var(--ochre) !important;
+  }
+
+  /* Results: headline cards */
+  .metric-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 24px;
+    text-align: left;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+  }
+  .metric-card:hover { box-shadow: var(--shadow); }
+  .metric-card .label {
+    font-family: "JetBrains Mono", monospace !important;
+    font-size: 10px; letter-spacing: 0.14em;
+    color: var(--slate); text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .metric-card .value {
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 32px;
+    color: var(--ink); line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .metric-card .value em { color: var(--ochre-deep); font-style: italic; font-weight: 400; }
+  .metric-card .sub {
+    font-size: 11.5px; color: var(--slate);
+    margin-top: 6px;
+    font-style: italic;
+  }
 
   .qa-banner {
-    background: #c00000; color: white;
-    padding: 12px 18px; border-radius: 8px; font-weight: 600;
-    margin-bottom: 16px; font-size: 14px;
+    background: var(--rust-soft);
+    color: var(--rust);
+    border-left: 3px solid var(--rust);
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    margin-bottom: 20px;
+    line-height: 1.5;
   }
 
-  .chip { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
-  .q-Star { background: #d9f2d9; color: #1a5e1a; }
-  .q-Plowhorse { background: #d9e1f2; color: #1f3864; }
-  .q-Puzzle { background: #fce4d6; color: #7e2e00; }
-  .q-Dog { background: #fce3e3; color: #7e0000; }
-  .m-Above { background: #fce3e3; color: #7e0000; }
-  .m-Within { background: #d9f2d9; color: #1a5e1a; }
-  .m-Below { background: #fff2cc; color: #6b4e00; }
-  .m-No { background: #f0f0f0; color: #555; }
+  /* Chips */
+  .chip {
+    padding: 3px 9px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    display: inline-block;
+    font-family: "Geist", sans-serif !important;
+    letter-spacing: 0.01em;
+  }
+  .q-Star      { background: var(--green-soft); color: var(--green); }
+  .q-Plowhorse { background: #DDE3EE; color: var(--ink); }
+  .q-Puzzle    { background: var(--ochre-soft); color: var(--ochre-deep); }
+  .q-Dog       { background: var(--rust-soft); color: var(--rust); }
+  .m-Above     { background: var(--rust-soft); color: var(--rust); }
+  .m-Within    { background: var(--green-soft); color: var(--green); }
+  .m-Below     { background: #FAEDD3; color: #6B5320; }
+  .m-No        { background: var(--line-soft); color: var(--slate); }
 
-  .act-raise { color: #006100; font-weight: 700; }
-  .act-cut { color: #c00000; font-weight: 700; }
-  .act-hold { color: #555; font-weight: 700; }
+  .act-raise { color: var(--green); font-weight: 600; }
+  .act-cut   { color: var(--rust); font-weight: 600; }
+  .act-hold  { color: var(--ink-mid); font-weight: 600; }
 
+  /* Section heading inside cards */
   .section-head {
-    color: #1F3864; font-size: 15px; font-weight: 700;
-    border-bottom: 2px solid #1F3864; padding-bottom: 4px;
-    margin: 20px 0 10px;
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 18px;
+    color: var(--ink); letter-spacing: -0.01em;
+    margin: 28px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-head::after {
+    content: "";
+    flex: 1; height: 1px;
+    background: var(--line-soft);
+    margin-left: 16px;
+    display: none;
   }
 
-  /* Headline card on owner success page */
-  .owner-success-card {
-    background: white;
-    border: 1px solid #e0e6f0;
-    border-radius: 12px;
-    padding: 32px;
-    text-align: center;
-    max-width: 560px;
-    margin: 24px auto;
-    box-shadow: 0 4px 14px rgba(31,56,100,0.08);
-  }
-  .owner-success-card .big-number {
-    font-size: 48px; font-weight: 800; color: #1F3864;
-    letter-spacing: -1px; margin: 12px 0;
-  }
-  .owner-success-card .label {
-    font-size: 12px; color: #7a8599; text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  /* Honeypot — invisible to humans, visible to bots */
-  .honeypot {
+  /* Honeypot — invisible to humans */
+  div[data-testid="stTextInput"]:has(input[aria-label="Leave this empty"]) {
     position: absolute !important;
     left: -9999px !important;
     width: 1px !important;
@@ -255,15 +798,46 @@ st.markdown("""
     opacity: 0 !important;
   }
 
-  /* ── Mobile responsive ──────────────────────────────────── */
-  @media (max-width: 640px) {
-    .landing-hero { padding: 32px 16px 20px; }
-    .landing-hero h1 { font-size: 32px; }
-    .landing-hero p.sub { font-size: 16px; }
+  /* Sensitivity cards */
+  .sens-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+  }
+  .sens-card.baseline {
+    border: 1.5px solid var(--ink);
+    background: var(--cream);
+  }
+  .sens-label {
+    font-family: "JetBrains Mono", monospace !important;
+    font-size: 10px; letter-spacing: 0.12em;
+    color: var(--slate); text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .sens-val {
+    font-family: "Fraunces", serif !important;
+    font-weight: 500; font-size: 24px;
+    letter-spacing: -0.02em;
+  }
+  .sens-val.pos { color: var(--green); }
+  .sens-val.neg { color: var(--rust); }
+
+  /* ── Mobile ─────────────────────────────────────────────── */
+  @media (max-width: 720px) {
+    .landing-wrap { padding: 16px 18px 60px; }
+    .landing-hero h1 { font-size: 38px; }
+    .landing-hero .sub { font-size: 16px; }
     .how-grid { grid-template-columns: 1fr; }
-    .proof-section .metric-row { flex-direction: column; gap: 16px; }
-    .owner-success-card .big-number { font-size: 36px; }
-    /* Stack any 4-col header into 1-col on mobile */
+    .pp-metrics { grid-template-columns: 1fr; gap: 20px; }
+    .proof-panel { padding: 32px 24px; }
+    .proof-panel h2 { font-size: 26px; }
+    .form-wrap { padding: 8px 14px 60px; }
+    .form-section { padding: 24px 18px; }
+    .menu-table-head { display: none; }
+    .ml-header { padding: 22px 22px; }
+    .ml-header h1 { font-size: 24px; }
     div[data-testid="column"] { width: 100% !important; }
   }
 </style>
@@ -333,87 +907,115 @@ def render_landing():
         track("landing_view")
         st.session_state.landing_tracked = True
 
-    # Hero
+    # Wrapper opening + nav + hero
     st.markdown("""
-    <div class="landing-hero">
-      <div class="eyebrow">MarginLab Pricing Lab</div>
-      <h1>Profit-maximizing menu pricing<br>for <span class="accent">cafés</span>.</h1>
-      <p class="sub">A free 15-minute audit using Lerner economics and demand calibration.
-      No login. No spam. PDF report in your inbox.</p>
+    <div class="landing-wrap">
+      <div class="landing-nav">
+        <div class="nav-brand">
+          <div class="nav-mark">M</div>
+          <div>
+            <div class="nav-name">MarginLab</div>
+            <div class="nav-tagline">Pricing Lab</div>
+          </div>
+        </div>
+        <div class="nav-tagline" style="font-style:italic">Built for café operators</div>
+      </div>
+
+      <div class="landing-hero">
+        <div class="hero-eyebrow">A free pricing audit · No login</div>
+        <h1>Pricing your menu, the way a <em>consultant</em> would do it.</h1>
+        <p class="sub">A 5-minute audit grounded in Lerner-optimal economics, menu-engineering theory,
+        and confidence-weighted shrinkage. You enter your menu — we email you a PDF report with item-by-item recommendations.</p>
+        <div class="hero-bullets">
+          <span>Free</span>
+          <span>No login required</span>
+          <span>Report in your inbox</span>
+          <span>~30 seconds to run</span>
+        </div>
+      </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # CTA button
-    cta_col1, cta_col2, cta_col3 = st.columns([2, 1, 2])
-    with cta_col2:
-        if st.button("Start your free audit →", type="primary", use_container_width=True):
+    # Primary CTA (positioned right under hero)
+    cta_col1, cta_col2 = st.columns([1, 5])
+    with cta_col1:
+        if st.button("Start your free audit", type="primary", use_container_width=True):
             track("cta_start_audit_click")
             st.session_state.view = "owner_audit"
             st.rerun()
 
     # How it works
     st.markdown("""
-    <div class="how-section">
-      <h2>How it works</h2>
+    <div class="landing-wrap" style="padding-top:0;padding-bottom:0">
+      <div class="section-divider">
+        <span class="index">01</span>
+        <span class="label">How it works</span>
+        <span class="line"></span>
+      </div>
+
       <div class="how-grid">
         <div class="how-card">
-          <div class="step-num">1</div>
+          <div class="how-step">i.</div>
           <h3>Enter your menu</h3>
           <p>Items, costs, current prices, monthly units. Takes about 5 minutes for a typical café.</p>
         </div>
         <div class="how-card">
-          <div class="step-num">2</div>
+          <div class="how-step">ii.</div>
           <h3>The model runs</h3>
           <p>A 13-sheet Excel engine computes the profit-maximizing price for each item — guarded by role caps, market context, and confidence-weighted shrinkage.</p>
         </div>
         <div class="how-card">
-          <div class="step-num">3</div>
+          <div class="how-step">iii.</div>
           <h3>PDF in your inbox</h3>
           <p>Item-by-item recommendations, sensitivity analysis, and a sequencing plan. Forward it to your accountant.</p>
         </div>
       </div>
-    </div>
-    """, unsafe_allow_html=True)
 
-    # Proof / example
-    st.markdown("""
-    <div class="proof-section">
-      <div style="font-size:11px;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;font-weight:600">
-        Example output for a 6-item café menu
+      <div class="proof-panel">
+        <div class="pp-label">Example output · 6-item café menu</div>
+        <h2>The kind of clarity you get back — but <em>personalized</em> to your menu.</h2>
+        <div class="pp-metrics">
+          <div class="pp-metric">
+            <div class="label">Monthly Δ profit</div>
+            <div class="val"><em>+$372</em></div>
+          </div>
+          <div class="pp-metric">
+            <div class="label">Lift versus baseline</div>
+            <div class="val"><em>+1.4%</em></div>
+          </div>
+          <div class="pp-metric">
+            <div class="label">Items to change</div>
+            <div class="val">5 of 6</div>
+          </div>
+        </div>
+        <p class="note">Real audits are personalized to your specific menu, category mix, and (optionally) competitor context.</p>
       </div>
-      <div class="metric-row">
-        <div class="proof-metric">
-          <div class="label">Monthly Δ profit</div>
-          <div class="value">+$372</div>
-        </div>
-        <div class="proof-metric">
-          <div class="label">Lift</div>
-          <div class="value">+1.4%</div>
-        </div>
-        <div class="proof-metric">
-          <div class="label">Items to change</div>
-          <div class="value">5 of 6</div>
-        </div>
-      </div>
-      <p class="note">Real audits are personalized to your specific menu and category mix.</p>
-    </div>
-    """, unsafe_allow_html=True)
 
-    # Who built this
-    st.markdown("""
-    <div class="who-section">
-      <h2>Who built this</h2>
-      <p>
-        MarginLab is built and run by <strong>Felix Richard</strong>, an independent consultant
-        focused on pricing for food and beverage operators. The model behind it combines
-        Lerner-optimal markup theory, menu-engineering quadrants, and demand-calibrated
-        elasticities — packaged into something a café owner can act on the same day.
-      </p>
+      <div class="section-divider">
+        <span class="index">02</span>
+        <span class="label">Who built this</span>
+        <span class="line"></span>
+      </div>
+
+      <div class="who-section">
+        <h2>An independent consultant who <em>obsesses</em> over menu economics.</h2>
+        <p>
+          MarginLab is built and run by <strong>Felix Richard</strong>, an independent consultant
+          focused on pricing for food and beverage operators. The model behind this audit combines
+          Lerner-optimal markup theory, menu-engineering quadrants, and demand-calibrated
+          elasticities — packaged into something a café owner can act on the same day.
+        </p>
+      </div>
+
+      <div class="cta-strip">
+        <h3>Ready to see your numbers?</h3>
+        <p>Free, takes five minutes, no account required.</p>
+    </div>
     </div>
     """, unsafe_allow_html=True)
 
     # Bottom CTA
-    cta_col1, cta_col2, cta_col3 = st.columns([2, 1, 2])
+    cta_col1, cta_col2, cta_col3 = st.columns([2, 2, 2])
     with cta_col2:
         if st.button("Get my free audit", type="primary", use_container_width=True, key="cta_bottom"):
             track("cta_bottom_click")
@@ -421,12 +1023,19 @@ def render_landing():
             st.rerun()
 
     # Footer
-    st.markdown(f"""
-    <div class="landing-footer">
-      © MarginLab · Contact: <a href="mailto:felixrichard1208@gmail.com" style="color:#1F3864">felixrichard1208@gmail.com</a><br>
-      We only use your email to send your audit report and follow-ups. We never share it.
-      <br><br>
-      <a href="?view=consultant" style="color:#9aa5b8;font-size:11px">Consultant access</a>
+    st.markdown("""
+    <div class="landing-wrap" style="padding-top:0">
+      <div class="landing-footer">
+        <div class="row1">
+          © MarginLab · <a href="mailto:felixrichard1208@gmail.com">felixrichard1208@gmail.com</a>
+        </div>
+        <div class="row1" style="font-size:12px;color:var(--slate)">
+          We only use your email to send your audit report and follow-ups. We never share it.
+        </div>
+        <div class="row2">
+          <a href="?view=consultant" style="font-size:11px">Consultant access →</a>
+        </div>
+      </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -436,35 +1045,53 @@ def render_landing():
 # ══════════════════════════════════════════════════════════════════════════════
 
 def render_owner_audit():
+    """Owner-facing audit form — three labeled section cards, PDF-only delivery."""
+    # Wrap whole form
+    st.markdown('<div class="form-wrap">', unsafe_allow_html=True)
+
     # Header
     st.markdown("""
     <div class="ml-header">
-      <h1>📊 MarginLab Pricing Audit</h1>
-      <p>Enter your menu below. We'll email your PDF report in about 30 seconds.</p>
+      <div class="eyebrow">Pricing Audit · Free</div>
+      <h1>Tell us about <em>your menu</em>.</h1>
+      <p>Enter your items below. We'll run the model and email your PDF report in about thirty seconds.</p>
     </div>
     """, unsafe_allow_html=True)
 
     # Back button
-    if st.button("← Back to home"):
+    if st.button("← Back to home", key="owner_back"):
         st.session_state.view = "landing"
         st.session_state.audit_result = None
         st.session_state.email_submitted = False
         st.rerun()
 
-    # If audit already run and email already submitted, show success state
+    # If audit already run and email submitted, show success state
     if st.session_state.audit_result is not None and st.session_state.email_submitted:
         render_owner_success()
+        st.markdown('</div>', unsafe_allow_html=True)
         return
 
-    currency = st.session_state.settings["currency"]
-    cafe_name = st.text_input("Your café name (optional)",
-                              value=st.session_state.audit_cafe_name,
-                              placeholder="e.g. The Daily Grind")
-    st.session_state.audit_cafe_name = cafe_name
+    # ── SECTION 1: About your café ─────────────────────────────────
+    st.markdown("""
+    <div class="form-section">
+      <div class="form-section-head">
+        <span class="form-section-num">i.</span>
+        <span class="form-section-title">About your café</span>
+      </div>
+      <p class="form-section-desc">Your café name is optional and only used to personalize the PDF report.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Currency
-    qc1, qc2 = st.columns([1, 5])
-    with qc1:
+    s1_c1, s1_c2 = st.columns([3, 1])
+    with s1_c1:
+        cafe_name = st.text_input(
+            "Café name",
+            value=st.session_state.audit_cafe_name,
+            placeholder="e.g. The Daily Grind",
+            label_visibility="visible",
+        )
+        st.session_state.audit_cafe_name = cafe_name
+    with s1_c2:
         cur = st.selectbox(
             "Currency", CURRENCIES,
             index=CURRENCIES.index(st.session_state.settings["currency"]),
@@ -472,88 +1099,123 @@ def render_owner_audit():
         st.session_state.settings["currency"] = cur
     currency = cur
 
-    # Menu table
-    st.markdown('<div class="section-head">Your Menu</div>', unsafe_allow_html=True)
-    st.caption("Enter your menu items. You need at least: name, cost, current price, and monthly units sold.")
+    # ── SECTION 2: Your menu ───────────────────────────────────────
+    st.markdown("""
+    <div class="form-section">
+      <div class="form-section-head">
+        <span class="form-section-num">ii.</span>
+        <span class="form-section-title">Your menu</span>
+      </div>
+      <p class="form-section-desc">Add at least one item. We need name, cost, current price, and rough monthly units sold.
+      You can add up to thirty items.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    _render_menu_table(currency)
+    # Menu table headers (visible on desktop, hidden on mobile via CSS)
+    st.markdown(f"""
+    <div class="menu-table-head">
+      <span>Item name</span>
+      <span>Category</span>
+      <span>Role</span>
+      <span>Cost · {currency}</span>
+      <span>Price · {currency}</span>
+      <span>Units / month</span>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Add/remove buttons
-    btn_c1, btn_c2, _ = st.columns([1, 1, 7])
+    _render_menu_table(currency, headerless=True)
+
+    # Add/remove row
+    btn_c1, btn_c2, _ = st.columns([1, 1, 5])
     with btn_c1:
-        if st.button("＋ Add item") and st.session_state.num_items < 30:
+        if st.button("Add another item", key="owner_add") and st.session_state.num_items < 30:
             st.session_state.num_items += 1
             st.rerun()
     with btn_c2:
-        if st.button("－ Remove last") and st.session_state.num_items > 1:
+        if st.button("Remove last", key="owner_rem") and st.session_state.num_items > 1:
             st.session_state.num_items -= 1
             st.rerun()
 
     # Competitor expander
-    with st.expander("🏪 Add competitor prices (optional)"):
-        st.caption("Enter prices from up to 3 nearby cafés for items where market context matters. Leave blank to skip.")
+    with st.expander("Add competitor prices (optional)"):
+        st.caption("Enter prices from up to three nearby cafés for items where market context matters. Leave blank to skip.")
         _render_competitor_table()
 
-    # Newsletter opt-in
+    # ── SECTION 3: Send the audit ──────────────────────────────────
+    st.markdown("""
+    <div class="form-section">
+      <div class="form-section-head">
+        <span class="form-section-num">iii.</span>
+        <span class="form-section-title">Send the audit</span>
+      </div>
+      <p class="form-section-desc">Your full PDF report — with item-by-item recommendations, sensitivity analysis,
+      and a sequencing plan — will be in your inbox within a minute.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="email-callout">', unsafe_allow_html=True)
+    email_val = st.text_input(
+        "Email address",
+        placeholder="you@yourcafe.com",
+        key="owner_email_input",
+    )
+    st.session_state.audit_owner_email = email_val
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Newsletter opt-in (styled checkbox)
     newsletter = st.checkbox(
-        "Send me Felix's monthly pricing insights newsletter (unsubscribe anytime)",
+        "Send me Felix's monthly pricing insights (unsubscribe anytime)",
         value=st.session_state.newsletter_opt_in,
     )
     st.session_state.newsletter_opt_in = newsletter
 
-    # Honeypot — bot trap (real users never see this)
+    # Honeypot — bot trap (invisible)
     honeypot = st.text_input(
         "Leave this empty",
         value="",
         key="_honeypot_field",
         label_visibility="collapsed",
     )
-    st.markdown("""
-    <style>
-      div[data-testid="stTextInput"]:has(input[aria-label="Leave this empty"]) {
-        position: absolute !important; left: -9999px !important;
-      }
-    </style>
-    """, unsafe_allow_html=True)
 
-    # Email gate BEFORE running the audit (so we have it for delivery)
-    st.markdown('<div class="section-head">Your Email</div>', unsafe_allow_html=True)
-    st.caption("We'll send your PDF report to this address.")
-    email_val = st.text_input("Email address", placeholder="you@yourcafe.com", key="owner_email_input")
-    st.session_state.audit_owner_email = email_val
-
-    # Run button
-    st.markdown("---")
-    run_col, _ = st.columns([2, 6])
+    # Submit button
+    st.markdown('<div class="submit-row"></div>', unsafe_allow_html=True)
+    run_col, _ = st.columns([2, 4])
     with run_col:
-        run_clicked = st.button("📩 Email me my audit", type="primary",
-                                use_container_width=True, key="owner_run")
+        run_clicked = st.button(
+            "Email me my audit  →",
+            type="primary",
+            use_container_width=True,
+            key="owner_run",
+        )
 
     if run_clicked:
-        # Honeypot check
+        # Honeypot — silent no-op
         if honeypot.strip():
-            # Silently no-op (bot trap)
             st.success("Submitted! Check your inbox.")
+            st.markdown('</div>', unsafe_allow_html=True)
             return
 
-        # Validate email
+        # Email validation
         ok, reason = validate_email(email_val)
         if not ok:
             st.error(reason)
+            st.markdown('</div>', unsafe_allow_html=True)
             return
 
         # Rate limit
         ip = get_ip()
         allowed, _ = check_and_record(ip, max_per_hour=5)
         if not allowed:
-            st.error("You've reached the audit limit for this hour. Please try again later or email felixrichard1208@gmail.com if you need more.")
+            st.error("You've reached the audit limit for this hour. Please try again later, or email felixrichard1208@gmail.com if you need more.")
+            st.markdown('</div>', unsafe_allow_html=True)
             return
 
-        # Collect items
+        # Gather items
         items_raw = [st.session_state.menu_items[i] for i in range(st.session_state.num_items)]
         active = [it for it in items_raw if it.get("name", "").strip()]
         if not active:
-            st.error("Please enter at least one menu item.")
+            st.error("Please enter at least one menu item before submitting.")
+            st.markdown('</div>', unsafe_allow_html=True)
             return
 
         def _parse_comp(v):
@@ -566,10 +1228,8 @@ def render_owner_audit():
         item_inputs = [
             ItemInput(
                 name=it["name"].strip(),
-                category=it["category"],
-                role=it["role"],
-                cost=float(it["cost"]),
-                price=float(it["price"]),
+                category=it["category"], role=it["role"],
+                cost=float(it["cost"]), price=float(it["price"]),
                 monthly_units=int(it["monthly_units"]),
                 comp1=_parse_comp(it["comp1"]),
                 comp2=_parse_comp(it["comp2"]),
@@ -577,7 +1237,6 @@ def render_owner_audit():
             )
             for it in active
         ]
-
         s = st.session_state.settings
         settings_input = SettingsInput(
             currency=s["currency"], round_to=float(s["round_to"]),
@@ -593,25 +1252,23 @@ def render_owner_audit():
             result, error = run_audit(settings_input, item_inputs)
             if error:
                 st.error(f"Something went wrong: {error}")
+                st.markdown('</div>', unsafe_allow_html=True)
                 return
 
             st.session_state.audit_result = result
             st.session_state.audit_currency = s["currency"]
             st.session_state.email_submitted = True
 
-            # Persist
             save_submission(
                 email=email_val, mode="owner", currency=s["currency"],
                 items=item_inputs, audit=result,
                 cafe_name=cafe_name, newsletter_opt_in=newsletter,
             )
 
-            # Track + identify
             track("email_submitted", {"item_count": len(item_inputs)})
             identify(email_val, {"cafe_name": cafe_name,
                                   "newsletter_opt_in": newsletter})
 
-            # Send emails
             if _email_configured():
                 try:
                     pdf_bytes = generate_pdf(
@@ -630,13 +1287,13 @@ def render_owner_audit():
                         currency=s["currency"], audit=result,
                         pdf_bytes=pdf_bytes,
                     )
-                    # Schedule follow-ups
                     schedule_followups(owner_email=email_val, cafe_name=cafe_name)
                 except Exception:
-                    pass  # never block flow on email failure
+                    pass
 
         st.rerun()
 
+    st.markdown('</div>', unsafe_allow_html=True)  # close form-wrap
 
 def render_owner_success():
     audit = st.session_state.audit_result
@@ -651,29 +1308,31 @@ def render_owner_success():
 
     st.markdown(f"""
     <div class="owner-success-card">
-      <div style="font-size:36px;margin-bottom:8px">✓</div>
-      <h2 style="margin:0 0 8px;color:#1A1A2E;font-size:24px;font-weight:700">
-        Your audit is on its way
-      </h2>
-      <p style="color:#6b7280;font-size:14px;margin:0 0 24px">
-        We just emailed your full PDF report to <strong>{email}</strong>. Check your inbox in the next minute or two.
+      <div class="success-icon">✓</div>
+      <h2>Your audit is on its way.</h2>
+      <p class="lede">
+        We just emailed your full PDF report to <strong>{email}</strong>.<br>
+        Check your inbox in the next minute or two.
       </p>
 
-      <div class="label">Estimated potential lift for {display_cafe}</div>
-      <div class="big-number">{lift_str}</div>
-      <div style="color:#6b7280;font-size:13px">{pct_str} versus your current pricing · monthly</div>
+      <div class="success-metric">
+        <div class="label">Estimated lift for {display_cafe}</div>
+        <div class="big-number"><em>{lift_str}</em></div>
+        <div class="sub">{pct_str} vs current pricing · monthly</div>
+      </div>
 
-      <p style="margin-top:24px;font-size:13px;color:#6b7280;line-height:1.6">
-        The full per-item breakdown, sensitivity analysis, and a sequencing plan are in your PDF.<br>
-        Don't see it? Check spam, or email <a href="mailto:felixrichard1208@gmail.com" style="color:#1F3864">felixrichard1208@gmail.com</a>.
+      <p class="next-note">
+        The full per-item breakdown, sensitivity analysis, and sequencing plan are in the PDF.<br>
+        Don't see it? Check your spam folder, or email
+        <a href="mailto:felixrichard1208@gmail.com">felixrichard1208@gmail.com</a>.
       </p>
     </div>
     """, unsafe_allow_html=True)
 
     # Reset / new audit
-    rc1, rc2, rc3 = st.columns([2, 1, 2])
+    rc1, rc2, rc3 = st.columns([2, 2, 2])
     with rc2:
-        if st.button("Run another audit", use_container_width=True):
+        if st.button("Run another audit", use_container_width=True, key="owner_again"):
             st.session_state.audit_result = None
             st.session_state.email_submitted = False
             st.session_state.audit_owner_email = ""
@@ -687,23 +1346,36 @@ def render_owner_success():
 def _check_consultant_password() -> bool:
     if st.session_state.consultant_auth:
         return True
-    st.markdown('<div class="ml-header"><h1>🔒 Consultant Access</h1></div>', unsafe_allow_html=True)
+    st.markdown('<div class="form-wrap">', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="ml-header">
+      <div class="eyebrow">Restricted</div>
+      <h1>Consultant <em>access</em>.</h1>
+      <p>Enter your password to access the full audit interface, results, and lead history.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="form-section">', unsafe_allow_html=True)
     pw = st.text_input("Password", type="password", placeholder="Consultant password")
-    if st.button("Sign in"):
-        correct = os.environ.get("CONSULTANT_PASSWORD")
-        if correct is None:
-            try:
-                correct = st.secrets["CONSULTANT_PASSWORD"]
-            except (KeyError, FileNotFoundError, Exception):
-                correct = "marginlab2024"  # fallback for local dev
-        if pw and pw == correct:
-            st.session_state.consultant_auth = True
+    pwc1, pwc2 = st.columns([1, 1])
+    with pwc1:
+        if st.button("Sign in", type="primary", use_container_width=True):
+            correct = os.environ.get("CONSULTANT_PASSWORD")
+            if correct is None:
+                try:
+                    correct = st.secrets["CONSULTANT_PASSWORD"]
+                except (KeyError, FileNotFoundError, Exception):
+                    correct = "marginlab2024"
+            if pw and pw == correct:
+                st.session_state.consultant_auth = True
+                st.rerun()
+            elif pw:
+                st.error("Wrong password.")
+    with pwc2:
+        if st.button("← Back to home", use_container_width=True):
+            st.session_state.view = "landing"
             st.rerun()
-        elif pw:
-            st.error("Wrong password.")
-    if st.button("← Back to home"):
-        st.session_state.view = "landing"
-        st.rerun()
+    st.markdown('</div></div>', unsafe_allow_html=True)
     return False
 
 
@@ -711,10 +1383,12 @@ def render_consultant():
     if not _check_consultant_password():
         return
 
+    st.markdown('<div class="form-wrap" style="max-width:1180px">', unsafe_allow_html=True)
     st.markdown("""
     <div class="ml-header">
-      <h1>📊 MarginLab · Consultant View</h1>
-      <p>Run audits on behalf of a client · access lead history · download Excel and PDF</p>
+      <div class="eyebrow">Consultant view · Internal</div>
+      <h1>Audit on a <em>client's behalf</em>.</h1>
+      <p>Run an audit, view results, download Excel or PDF, and browse the lead history.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -723,7 +1397,7 @@ def render_consultant():
         st.session_state.audit_result = None
         st.rerun()
 
-    tabs = st.tabs(["📝 Input", "📊 Results", "🗂 Admin"])
+    tabs = st.tabs(["Input", "Results", "Admin"])
 
     with tabs[0]:
         _consultant_input_tab()
@@ -731,6 +1405,8 @@ def render_consultant():
         _consultant_results_tab()
     with tabs[2]:
         _consultant_admin_tab()
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def _consultant_input_tab():
@@ -893,17 +1569,17 @@ def _consultant_results_tab():
         st.markdown(f"""
         <div class="metric-card">
           <div class="label">Monthly Δ Profit</div>
-          <div class="value">{lift_str}</div>
+          <div class="value"><em>{lift_str}</em></div>
           <div class="sub">{currency} · {pct_str}</div>
         </div>""", unsafe_allow_html=True)
     with m2:
-        bg = {"HIGH": "#d9f2d9", "MEDIUM": "#fff2cc", "LOW": "#fce4d6"}.get(conf, "#f8f8f8")
-        tc = {"HIGH": "#1a5e1a", "MEDIUM": "#6b4e00", "LOW": "#7e2e00"}.get(conf, "#333")
+        bg = {"HIGH": "#DDE6DC", "MEDIUM": "#E8DCC4", "LOW": "#F0D9D4"}.get(conf, "#EFEAE0")
+        tc = {"HIGH": "#4A6B4A", "MEDIUM": "#9A7842", "LOW": "#9C4A3C"}.get(conf, "#3D4862")
         st.markdown(f"""
         <div class="metric-card" style="background:{bg}">
-          <div class="label" style="color:{tc}">Confidence</div>
+          <div class="label" style="color:{tc};opacity:0.85">Confidence</div>
           <div class="value" style="color:{tc}">{conf}</div>
-          <div class="sub" style="color:{tc}">weighted</div>
+          <div class="sub" style="color:{tc};opacity:0.85">weighted</div>
         </div>""", unsafe_allow_html=True)
     with m3:
         st.markdown(f"""
@@ -952,32 +1628,32 @@ def _consultant_results_tab():
         [("Conservative (e×1.2)", audit.sens_conservative, False),
          ("Baseline (e×1.0)", audit.sens_baseline, True),
          ("Optimistic (e×0.8)", audit.sens_optimistic, False)]):
-        border = "2px solid #1F3864" if is_base else "1px solid #dde3ee"
-        color = "#006100" if val >= 0 else "#c00000"
+        base_class = "sens-card baseline" if is_base else "sens-card"
+        val_class = "pos" if val >= 0 else "neg"
         sign = "+" if val >= 0 else ""
         col.markdown(f"""
-        <div style="border:{border};border-radius:8px;padding:14px;text-align:center;background:white">
-          <div style="font-size:11px;color:#7a8599">{label}</div>
-          <div style="font-size:22px;font-weight:800;color:{color}">{sign}{_currency_display(val, currency)} {currency}</div>
+        <div class="{base_class}">
+          <div class="sens-label">{label}</div>
+          <div class="sens-val {val_class}">{sign}{_currency_display(val, currency)} {currency}</div>
         </div>""", unsafe_allow_html=True)
 
-    rob_bg = "#d9f2d9" if "YES" in (audit.sens_robust or "") else "#fce3e3"
-    rob_tc = "#1a5e1a" if "YES" in (audit.sens_robust or "") else "#7e0000"
+    rob_bg = "#DDE6DC" if "YES" in (audit.sens_robust or "") else "#F0D9D4"
+    rob_tc = "#4A6B4A" if "YES" in (audit.sens_robust or "") else "#9C4A3C"
     st.markdown(f"""
     <div style="background:{rob_bg};color:{rob_tc};border-radius:8px;padding:10px 16px;
-                margin-top:10px;font-weight:600;font-size:13px">
-      Recommendation robust? {audit.sens_robust or "—"}
+                margin-top:12px;font-weight:500;font-size:13px">
+      Recommendation robust? <em style="font-family:Fraunces,serif;font-style:italic">{audit.sens_robust or "—"}</em>
     </div>""", unsafe_allow_html=True)
 
     # QA
-    with st.expander("🔍 QA Summary"):
+    with st.expander("QA Summary"):
         qc1, qc2, qc3 = st.columns(3)
-        ready_bg = "#d9f2d9" if audit.qa_hard_fails == 0 else "#fce3e3"
-        ready_tc = "#1a5e1a" if audit.qa_hard_fails == 0 else "#7e0000"
+        ready_bg = "#DDE6DC" if audit.qa_hard_fails == 0 else "#F0D9D4"
+        ready_tc = "#4A6B4A" if audit.qa_hard_fails == 0 else "#9C4A3C"
         qc1.markdown(f"""
         <div style="background:{ready_bg};color:{ready_tc};border-radius:8px;
-                    padding:10px;font-weight:700;text-align:center">
-          {audit.qa_ready or ('✓ Ready' if audit.qa_hard_fails == 0 else '✗ Fix first')}
+                    padding:10px;font-weight:600;text-align:center">
+          {audit.qa_ready or ('Ready' if audit.qa_hard_fails == 0 else 'Fix first')}
         </div>""", unsafe_allow_html=True)
         qc2.metric("Soft warnings", audit.qa_soft_warns)
         qc3.metric("Info", audit.qa_info_obs)
@@ -1083,11 +1759,12 @@ def _consultant_admin_tab():
 
 # ── shared widgets ────────────────────────────────────────────────────────────
 
-def _render_menu_table(currency, key_prefix=""):
-    h_cols = st.columns([3, 2, 2, 1.5, 1.5, 1.5])
-    for col, label in zip(h_cols, ["Item name", "Category", "Role",
-                                    f"Cost ({currency})", f"Price ({currency})", "Units/mo"]):
-        col.markdown(f"**{label}**")
+def _render_menu_table(currency, key_prefix="", headerless=False):
+    if not headerless:
+        h_cols = st.columns([3, 2, 2, 1.5, 1.5, 1.5])
+        for col, label in zip(h_cols, ["Item name", "Category", "Role",
+                                        f"Cost ({currency})", f"Price ({currency})", "Units/mo"]):
+            col.markdown(f"**{label}**")
 
     n_items = st.session_state.num_items
     for i in range(n_items):
@@ -1165,7 +1842,8 @@ def _render_competitor_table(key_prefix=""):
 
 def _render_results_table(df: pd.DataFrame) -> str:
     headers = "".join(
-        f"<th style='background:#1F3864;color:white;padding:7px 10px;text-align:left;white-space:nowrap'>{c}</th>"
+        f"<th style='background:#0F1A2E;color:#FAF7F2;padding:9px 10px;text-align:left;white-space:nowrap;"
+        f"font-family:JetBrains Mono,monospace;font-weight:500;font-size:10px;letter-spacing:0.14em;text-transform:uppercase'>{c}</th>"
         for c in df.columns
     )
     body = ""
@@ -1182,16 +1860,25 @@ def _render_results_table(df: pd.DataFrame) -> str:
                 cls = {"Above market":"m-Above","Within market":"m-Within","Below market":"m-Below"}.get(str(val),"m-No")
                 cell = f'<span class="chip {cls}">{val}</span>'
             elif col == "Confidence":
-                colors = {"HIGH":"#d9f2d9;color:#1a5e1a","MEDIUM":"#fff2cc;color:#6b4e00","LOW":"#fce4d6;color:#7e2e00"}
-                bg = colors.get(str(val), "#f0f0f0;color:#555")
-                cell = f'<span class="chip" style="background:{bg}">{val}</span>'
+                # match the new ochre/green/rust soft palette
+                colors = {
+                    "HIGH":   "background:#DDE6DC;color:#4A6B4A",
+                    "MEDIUM": "background:#E8DCC4;color:#9A7842",
+                    "LOW":    "background:#F0D9D4;color:#9C4A3C",
+                }
+                style = colors.get(str(val), "background:#EFEAE0;color:#6B7588")
+                cell = f'<span class="chip" style="{style}">{val}</span>'
             elif col == "Narrative":
-                cell = f'<span style="font-size:12px;color:#555">{val}</span>'
+                cell = f'<span style="font-size:12px;color:#3D4862;line-height:1.5">{val}</span>'
             else:
-                cell = str(val)
-            cells += f"<td style='padding:6px 10px;border-bottom:1px solid #eef0f4;vertical-align:middle'>{cell}</td>"
-        body += f"<tr style='background:white'>{cells}</tr>"
-    return f"<table style='width:100%;border-collapse:collapse;font-size:13px'><thead><tr>{headers}</tr></thead><tbody>{body}</tbody></table>"
+                cell = f'<span style="color:#0F1A2E">{val}</span>'
+            cells += f"<td style='padding:8px 10px;border-bottom:1px solid #EFEAE0;vertical-align:middle'>{cell}</td>"
+        body += f"<tr style='background:#FDFCF9'>{cells}</tr>"
+    return (
+        f"<table style='width:100%;border-collapse:collapse;font-size:13px;"
+        f"border:1px solid #E5E0D4;border-radius:10px;overflow:hidden'>"
+        f"<thead><tr>{headers}</tr></thead><tbody>{body}</tbody></table>"
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════════════
