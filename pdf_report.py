@@ -12,6 +12,7 @@ V3 — premium redesign:
 
 from datetime import datetime
 from engine import AuditResult
+from i18n import t
 
 
 # ── Color tokens (mirror app.py design system) ───────────────────────────────
@@ -61,13 +62,14 @@ def build_pdf_html(
     audit: AuditResult,
     currency: str = "USD",
     cafe_name: str = "",
-    consultant_name: str = "Felix Richard",
+    consultant_name: str = "Felix Sean",
     consultant_email: str = "felixrichard1208@gmail.com",
     calendly_url: str = "https://calendly.com/marginlab-felix",
+    lang: str = "en",
 ) -> str:
     """Build full HTML for the audit PDF."""
     date_str = datetime.utcnow().strftime("%B %d, %Y")
-    display_cafe = cafe_name.strip() if cafe_name and cafe_name.strip() else "Your Café"
+    display_cafe = cafe_name.strip() if cafe_name and cafe_name.strip() else t("pdf_default_cafe", lang)
     watermark_text = f"Confidential analysis prepared for {display_cafe} by MarginLab · Not for redistribution · {date_str}"
 
     # ── Banner ────────────────────────────────────────────────────────────────
@@ -91,21 +93,21 @@ def build_pdf_html(
     <table style="width:100%;border-collapse:separate;border-spacing:10px 0;margin-bottom:24px">
       <tr>
         <td style="width:34%;background:{INK};color:{CREAM};border-radius:10px;padding:18px 20px;vertical-align:top">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{OCHRE};letter-spacing:0.16em;text-transform:uppercase">Monthly Δ profit</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{OCHRE};letter-spacing:0.16em;text-transform:uppercase">{t("pdf_metric_lift", lang)}</div>
           <div style="font-family:Fraunces,Georgia,serif;font-weight:500;font-size:30px;margin-top:6px;letter-spacing:-0.02em;color:{CREAM}">
             <em style="color:{OCHRE};font-style:italic;font-weight:400">{lift_display}</em> {currency}
           </div>
-          <div style="font-size:11.5px;color:{SLATE_SOFT};margin-top:4px;font-style:italic">{pct_display} versus baseline</div>
+          <div style="font-size:11.5px;color:{SLATE_SOFT};margin-top:4px;font-style:italic">{pct_display} {t("pdf_metric_lift_sub", lang)}</div>
         </td>
         <td style="width:33%;background:{conf_bg};border-radius:10px;padding:18px 20px;vertical-align:top">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{conf_fg};letter-spacing:0.16em;text-transform:uppercase;opacity:0.85">Confidence</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{conf_fg};letter-spacing:0.16em;text-transform:uppercase;opacity:0.85">{t("pdf_metric_conf", lang)}</div>
           <div style="font-family:Fraunces,Georgia,serif;font-weight:500;font-size:30px;margin-top:6px;letter-spacing:-0.02em;color:{conf_fg}">{audit.confidence}</div>
-          <div style="font-size:11.5px;color:{conf_fg};margin-top:4px;font-style:italic;opacity:0.85">weighted across items</div>
+          <div style="font-size:11.5px;color:{conf_fg};margin-top:4px;font-style:italic;opacity:0.85">{t("pdf_metric_conf_sub", lang)}</div>
         </td>
         <td style="width:33%;background:{CREAM_DEEP};border-radius:10px;padding:18px 20px;vertical-align:top">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{SLATE};letter-spacing:0.16em;text-transform:uppercase">Best opportunity</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{SLATE};letter-spacing:0.16em;text-transform:uppercase">{t("pdf_metric_best", lang)}</div>
           <div style="font-family:Fraunces,Georgia,serif;font-weight:500;font-size:17px;margin-top:6px;letter-spacing:-0.01em;color:{INK}">{audit.best_item.replace('Best item: ','')}</div>
-          <div style="font-size:11.5px;color:{SLATE};margin-top:4px;font-style:italic">highest Δ profit</div>
+          <div style="font-size:11.5px;color:{SLATE};margin-top:4px;font-style:italic">{t("pdf_metric_best_sub", lang)}</div>
         </td>
       </tr>
     </table>"""
@@ -139,21 +141,21 @@ def build_pdf_html(
     table_html = f"""
     <div style="display:flex;align-items:center;gap:12px;margin:24px 0 10px">
       <span style="font-family:'JetBrains Mono',monospace;color:{SLATE_SOFT};font-size:10px;letter-spacing:0.14em">01</span>
-      <span style="font-family:Fraunces,Georgia,serif;font-style:italic;color:{INK};font-size:18px;letter-spacing:-0.01em">Per-item recommendations</span>
+      <span style="font-family:Fraunces,Georgia,serif;font-style:italic;color:{INK};font-size:18px;letter-spacing:-0.01em">{t("pdf_section_recs", lang)}</span>
       <span style="flex:1;height:1px;background:{LINE}"></span>
     </div>
     <table style="width:100%;border-collapse:collapse;font-size:11.5px;color:{INK}">
       <thead style="display:table-header-group">
         <tr style="background:{INK};color:{CREAM}">
-          <th style="padding:8px 10px;text-align:left;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">Item</th>
-          <th style="padding:8px 4px;text-align:left;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">Action</th>
-          <th style="padding:8px 4px;text-align:right;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">From</th>
-          <th style="padding:8px 4px;text-align:right;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">To</th>
-          <th style="padding:8px 4px;text-align:right;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">Δ%</th>
-          <th style="padding:8px 4px;text-align:right;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">Δ Profit/mo</th>
-          <th style="padding:8px 4px;text-align:center;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">Quadrant</th>
-          <th style="padding:8px 4px;text-align:center;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">Market</th>
-          <th style="padding:8px 4px;text-align:left;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">Narrative</th>
+          <th style="padding:8px 10px;text-align:left;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">{t("pdf_col_item", lang)}</th>
+          <th style="padding:8px 4px;text-align:left;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">{t("pdf_col_action", lang)}</th>
+          <th style="padding:8px 4px;text-align:right;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">{t("pdf_col_from", lang)}</th>
+          <th style="padding:8px 4px;text-align:right;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">{t("pdf_col_to", lang)}</th>
+          <th style="padding:8px 4px;text-align:right;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">{t("pdf_col_dpct", lang)}</th>
+          <th style="padding:8px 4px;text-align:right;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">{t("pdf_col_dprofit", lang)}</th>
+          <th style="padding:8px 4px;text-align:center;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">{t("pdf_col_quadrant", lang)}</th>
+          <th style="padding:8px 4px;text-align:center;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">{t("pdf_col_market", lang)}</th>
+          <th style="padding:8px 4px;text-align:left;font-weight:500;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase">{t("pdf_col_narrative", lang)}</th>
         </tr>
       </thead>
       <tbody>
@@ -171,25 +173,25 @@ def build_pdf_html(
     sens_html = f"""
     <div style="display:flex;align-items:center;gap:12px;margin:24px 0 10px;page-break-after:avoid">
       <span style="font-family:'JetBrains Mono',monospace;color:{SLATE_SOFT};font-size:10px;letter-spacing:0.14em">02</span>
-      <span style="font-family:Fraunces,Georgia,serif;font-style:italic;color:{INK};font-size:18px;letter-spacing:-0.01em">Sensitivity check</span>
+      <span style="font-family:Fraunces,Georgia,serif;font-style:italic;color:{INK};font-size:18px;letter-spacing:-0.01em">{t("pdf_section_sens", lang)}</span>
       <span style="flex:1;height:1px;background:{LINE}"></span>
     </div>
     <table style="width:100%;border-collapse:separate;border-spacing:10px 0;page-break-inside:avoid">
       <tr>
         <td style="width:33%;border:1px solid {LINE};border-radius:8px;padding:14px;text-align:center;background:{PAPER}">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{SLATE};letter-spacing:0.12em;text-transform:uppercase">Conservative (e×1.2)</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{SLATE};letter-spacing:0.12em;text-transform:uppercase">{t("pdf_sens_cons", lang)} (e×1.2)</div>
           <div style="font-family:Fraunces,Georgia,serif;font-weight:500;font-size:20px;color:{cons_color};margin-top:4px;letter-spacing:-0.02em">
             {'+' if audit.sens_conservative>=0 else ''}{_fmt_currency(audit.sens_conservative,currency)}
           </div>
         </td>
         <td style="width:33%;border:1.5px solid {INK};border-radius:8px;padding:14px;text-align:center;background:{CREAM}">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{SLATE};letter-spacing:0.12em;text-transform:uppercase">Baseline (e×1.0)</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{SLATE};letter-spacing:0.12em;text-transform:uppercase">{t("pdf_sens_base", lang)} (e×1.0)</div>
           <div style="font-family:Fraunces,Georgia,serif;font-weight:500;font-size:20px;color:{base_color};margin-top:4px;letter-spacing:-0.02em">
             {'+' if audit.sens_baseline>=0 else ''}{_fmt_currency(audit.sens_baseline,currency)}
           </div>
         </td>
         <td style="width:33%;border:1px solid {LINE};border-radius:8px;padding:14px;text-align:center;background:{PAPER}">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{SLATE};letter-spacing:0.12em;text-transform:uppercase">Optimistic (e×0.8)</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{SLATE};letter-spacing:0.12em;text-transform:uppercase">{t("pdf_sens_opt", lang)} (e×0.8)</div>
           <div style="font-family:Fraunces,Georgia,serif;font-weight:500;font-size:20px;color:{opt_color};margin-top:4px;letter-spacing:-0.02em">
             {'+' if audit.sens_optimistic>=0 else ''}{_fmt_currency(audit.sens_optimistic,currency)}
           </div>
@@ -197,34 +199,32 @@ def build_pdf_html(
       </tr>
     </table>
     <div style="background:{robust_bg};color:{robust_fg};border-radius:6px;padding:8px 14px;font-size:11.5px;font-weight:500;margin-top:8px">
-      Recommendation robust? <em style="font-style:italic">{audit.sens_robust}</em>
+      {t("pdf_sens_robust", lang)} <em style="font-style:italic">{audit.sens_robust}</em>
     </div>"""
 
     # ── Next steps ────────────────────────────────────────────────────────────
     next_steps_html = f"""
     <div style="display:flex;align-items:center;gap:12px;margin:24px 0 10px;page-break-after:avoid">
       <span style="font-family:'JetBrains Mono',monospace;color:{SLATE_SOFT};font-size:10px;letter-spacing:0.14em">03</span>
-      <span style="font-family:Fraunces,Georgia,serif;font-style:italic;color:{INK};font-size:18px;letter-spacing:-0.01em">Next steps</span>
+      <span style="font-family:Fraunces,Georgia,serif;font-style:italic;color:{INK};font-size:18px;letter-spacing:-0.01em">{t("pdf_section_next", lang)}</span>
       <span style="flex:1;height:1px;background:{LINE}"></span>
     </div>
     <ol style="font-size:12px;line-height:1.65;color:{INK_MID};padding-left:22px;margin:6px 0;page-break-inside:avoid">
-      <li style="margin-bottom:6px"><b style="color:{INK}">Sequence, don't simultaneously change.</b> Start with the single highest-confidence raise.
+      <li style="margin-bottom:6px"><b style="color:{INK}">{t("pdf_next_1_title", lang)}</b> Start with the single highest-confidence raise.
           Hold the new price for two weeks. Measure traffic and revenue against the prior two weeks.</li>
-      <li style="margin-bottom:6px"><b style="color:{INK}">Watch your Traffic Drivers.</b> The model caps these tightly. Don't override the cap without
-          a clear plan — these items anchor customer perception of value across the rest of the menu.</li>
-      <li><b style="color:{INK}">Re-run after one cycle.</b> Once you've implemented and observed, re-do the audit with the new
-          numbers. Confidence tiers improve quickly once we have real before/after data.</li>
+      <li style="margin-bottom:6px"><b style="color:{INK}">{t("pdf_next_2_title", lang)}</b> {t("pdf_next_2_body", lang)}</li>
+      <li><b style="color:{INK}">{t("pdf_next_3_title", lang)}</b> {t("pdf_next_3_body", lang)}</li>
     </ol>
     <div style="background:{CREAM_DEEP};border-left:3px solid {OCHRE};padding:12px 16px;margin-top:14px;font-size:12px;line-height:1.55;page-break-inside:avoid;color:{INK}">
-      <b style="font-family:Fraunces,Georgia,serif;font-style:italic;font-size:14px">Want help implementing this?</b><br>
-      <span style="color:{INK_MID}">Reply to the email this report came in, or book a free 15-minute walkthrough:</span><br>
+      <b style="font-family:Fraunces,Georgia,serif;font-style:italic;font-size:14px">{t("pdf_next_help_h", lang)}</b><br>
+      <span style="color:{INK_MID}">{t("pdf_next_help_body", lang)}</span><br>
       <a href="{calendly_url}" style="color:{OCHRE_DEEP};font-weight:500;text-decoration:none;border-bottom:1px solid {OCHRE_SOFT}">{calendly_url}</a>
     </div>"""
 
     # ── Sign-off ──────────────────────────────────────────────────────────────
     signoff_html = f"""
     <div style="margin-top:24px;padding-top:14px;border-top:1px solid {LINE};font-size:11.5px;color:{INK_MID};page-break-inside:avoid">
-      Prepared by <b style="font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:500;color:{INK}">{consultant_name}</b> · MarginLab Pricing Lab<br>
+      {t("pdf_prepared_by", lang)} <b style="font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:500;color:{INK}">{consultant_name}</b> · MarginLab Pricing Lab<br>
       <span style="color:{SLATE};font-size:10.5px">{consultant_email}</span>
     </div>"""
 
@@ -307,11 +307,11 @@ def build_pdf_html(
   <div class="masthead">
     <div class="left">
       <h1 class="cafe">{display_cafe}</h1>
-      <div class="subtitle">Pricing audit · Prepared {date_str}</div>
+      <div class="subtitle">{t("pdf_subtitle", lang)} {date_str}</div>
     </div>
     <div class="right">
       <div class="brand">MarginLab</div>
-      <div class="dateline">PRICING LAB</div>
+      <div class="dateline">{t("pdf_brand_caption", lang)}</div>
     </div>
   </div>
 
@@ -328,9 +328,10 @@ def build_pdf_html(
 
 
 def generate_pdf(audit, currency="USD", cafe_name="",
-                 consultant_name="Felix Richard",
+                 consultant_name="Felix Sean",
                  consultant_email="felixrichard1208@gmail.com",
-                 calendly_url="https://calendly.com/marginlab-felix") -> bytes | None:
+                 calendly_url="https://calendly.com/marginlab-felix",
+                 lang="en") -> bytes | None:
     """Returns PDF bytes, or None if weasyprint not available."""
     try:
         from weasyprint import HTML
@@ -338,16 +339,17 @@ def generate_pdf(audit, currency="USD", cafe_name="",
         return None
     try:
         html = build_pdf_html(audit, currency, cafe_name, consultant_name,
-                              consultant_email, calendly_url)
+                              consultant_email, calendly_url, lang=lang)
         return HTML(string=html).write_pdf()
     except Exception:
         return None
 
 
 def generate_html_report(audit, currency="USD", cafe_name="",
-                         consultant_name="Felix Richard",
+                         consultant_name="Felix Sean",
                          consultant_email="felixrichard1208@gmail.com",
-                         calendly_url="https://calendly.com/marginlab-felix") -> str:
+                         calendly_url="https://calendly.com/marginlab-felix",
+                         lang="en") -> str:
     """HTML version that always works (no weasyprint required)."""
     return build_pdf_html(audit, currency, cafe_name, consultant_name,
-                          consultant_email, calendly_url)
+                          consultant_email, calendly_url, lang=lang)
