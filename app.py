@@ -37,6 +37,7 @@ from email_validate import validate_email
 from rate_limit import check_and_record, get_ip
 from lite_excel import export_lite_excel
 from analytics import track, identify
+from i18n import t, SUPPORTED_LANGS
 
 
 # ── page config ────────────────────────────────────────────────────────────────
@@ -582,16 +583,31 @@ st.markdown("""
     margin-bottom: 8px;
   }
 
-  /* Expander (competitor prices) */
-  .streamlit-expanderHeader, [data-testid="stExpander"] summary {
-    background: var(--cream) !important;
-    border: 1px solid var(--line) !important;
-    border-radius: 8px !important;
-    padding: 10px 14px !important;
+  /* Expander (competitor prices)
+     Target only the visible header div, NOT 'summary' (modern Streamlit doesn't use
+     summary tags but does use button + nested spans, and our previous selector caused
+     the chevron icon text "arrow_right" to leak through). */
+  [data-testid="stExpander"] {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin: 8px 0;
+  }
+  [data-testid="stExpander"] > details > summary,
+  [data-testid="stExpander"] details summary,
+  [data-testid="stExpander"] button[aria-expanded] {
+    padding: 12px 16px !important;
     font-family: "Geist", sans-serif !important;
     font-weight: 500 !important;
     color: var(--ink) !important;
     font-size: 14px !important;
+    background: transparent !important;
+    border: none !important;
+  }
+  /* Hide raw material-icon ligature text spilling out */
+  [data-testid="stExpander"] [data-testid="stIconMaterial"]::after,
+  [data-testid="stExpander"] [data-testid="stIcon"]::after {
+    content: none !important;
   }
 
   /* Run button — extra emphasis */
@@ -883,6 +899,7 @@ def _init_state():
             "demo_mode": "No",
         },
         "newsletter_opt_in": True,
+        "lang": "en",
         "landing_tracked": False,
         "form_started_tracked": False,
     }
@@ -907,138 +924,157 @@ def render_landing():
         track("landing_view")
         st.session_state.landing_tracked = True
 
-    # Wrapper opening + nav + hero
-    st.markdown("""
+    lang = st.session_state.lang
+
+    # ── Nav (brand + language toggle on the right) ─────────────────────────
+    st.markdown(f"""
     <div class="landing-wrap">
       <div class="landing-nav">
         <div class="nav-brand">
           <div class="nav-mark">M</div>
           <div>
             <div class="nav-name">MarginLab</div>
-            <div class="nav-tagline">Pricing Lab</div>
+            <div class="nav-tagline">{t("nav_brand_tagline", lang)}</div>
           </div>
         </div>
-        <div class="nav-tagline" style="font-style:italic">Built for café operators</div>
-      </div>
-
-      <div class="landing-hero">
-        <div class="hero-eyebrow">A free pricing audit · No login</div>
-        <h1>Pricing your menu, the way a <em>consultant</em> would do it.</h1>
-        <p class="sub">A 5-minute audit grounded in Lerner-optimal economics, menu-engineering theory,
-        and confidence-weighted shrinkage. You enter your menu — we email you a PDF report with item-by-item recommendations.</p>
-        <div class="hero-bullets">
-          <span>Free</span>
-          <span>No login required</span>
-          <span>Report in your inbox</span>
-          <span>~30 seconds to run</span>
+        <div class="nav-right">
+          <div class="nav-tagline" style="font-style:italic;margin-right:18px">{t("nav_built_for", lang)}</div>
         </div>
       </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Primary CTA (positioned right under hero)
-    cta_col1, cta_col2 = st.columns([1, 5])
-    with cta_col1:
-        if st.button("Start your free audit", type="primary", use_container_width=True):
+    # Language toggle (Streamlit widget — placed in top-right via columns)
+    lang_c1, lang_c2 = st.columns([7, 1])
+    with lang_c2:
+        new_lang = st.selectbox(
+            t("lang_label", lang),
+            options=["en", "id"],
+            format_func=lambda x: "English" if x == "en" else "Bahasa Indonesia",
+            index=0 if lang == "en" else 1,
+            label_visibility="collapsed",
+            key="lang_picker_landing",
+        )
+        if new_lang != lang:
+            st.session_state.lang = new_lang
+            st.rerun()
+
+    # ── Hero ───────────────────────────────────────────────────────────────
+    st.markdown(f"""
+    <div class="landing-wrap" style="padding-top:0">
+      <div class="landing-hero">
+        <div class="hero-eyebrow">{t("hero_eyebrow", lang)}</div>
+        <h1>{t("hero_h1_part1", lang)}<em>{t("hero_h1_accent", lang)}</em>{t("hero_h1_part2", lang)}</h1>
+        <p class="sub">{t("hero_sub", lang)}</p>
+        <div class="hero-bullets">
+          <span>{t("hero_bullet_1", lang)}</span>
+          <span>{t("hero_bullet_2", lang)}</span>
+          <span>{t("hero_bullet_3", lang)}</span>
+          <span>{t("hero_bullet_4", lang)}</span>
+        </div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Primary CTA — left-aligned but properly sized so it doesn't look orphaned
+    cta_a, cta_b = st.columns([2, 6])
+    with cta_a:
+        if st.button(t("cta_start", lang) + "  →", type="primary",
+                     use_container_width=True, key="cta_start_top"):
             track("cta_start_audit_click")
             st.session_state.view = "owner_audit"
             st.rerun()
 
-    # How it works
-    st.markdown("""
+    # ── How it works ───────────────────────────────────────────────────────
+    st.markdown(f"""
     <div class="landing-wrap" style="padding-top:0;padding-bottom:0">
       <div class="section-divider">
         <span class="index">01</span>
-        <span class="label">How it works</span>
+        <span class="label">{t("how_label", lang)}</span>
         <span class="line"></span>
       </div>
 
       <div class="how-grid">
         <div class="how-card">
           <div class="how-step">i.</div>
-          <h3>Enter your menu</h3>
-          <p>Items, costs, current prices, monthly units. Takes about 5 minutes for a typical café.</p>
+          <h3>{t("how_1_title", lang)}</h3>
+          <p>{t("how_1_body", lang)}</p>
         </div>
         <div class="how-card">
           <div class="how-step">ii.</div>
-          <h3>The model runs</h3>
-          <p>A 13-sheet Excel engine computes the profit-maximizing price for each item — guarded by role caps, market context, and confidence-weighted shrinkage.</p>
+          <h3>{t("how_2_title", lang)}</h3>
+          <p>{t("how_2_body", lang)}</p>
         </div>
         <div class="how-card">
           <div class="how-step">iii.</div>
-          <h3>PDF in your inbox</h3>
-          <p>Item-by-item recommendations, sensitivity analysis, and a sequencing plan. Forward it to your accountant.</p>
+          <h3>{t("how_3_title", lang)}</h3>
+          <p>{t("how_3_body", lang)}</p>
         </div>
       </div>
 
       <div class="proof-panel">
-        <div class="pp-label">Example output · 6-item café menu</div>
-        <h2>The kind of clarity you get back — but <em>personalized</em> to your menu.</h2>
+        <div class="pp-label">{t("proof_label", lang)}</div>
+        <h2>{t("proof_h2_part1", lang)}<em>{t("proof_h2_accent", lang)}</em>{t("proof_h2_part2", lang)}</h2>
         <div class="pp-metrics">
           <div class="pp-metric">
-            <div class="label">Monthly Δ profit</div>
+            <div class="label">{t("proof_metric_1", lang)}</div>
             <div class="val"><em>+$372</em></div>
           </div>
           <div class="pp-metric">
-            <div class="label">Lift versus baseline</div>
+            <div class="label">{t("proof_metric_2", lang)}</div>
             <div class="val"><em>+1.4%</em></div>
           </div>
           <div class="pp-metric">
-            <div class="label">Items to change</div>
-            <div class="val">5 of 6</div>
+            <div class="label">{t("proof_metric_3", lang)}</div>
+            <div class="val">{t("proof_metric_3_val", lang)}</div>
           </div>
         </div>
-        <p class="note">Real audits are personalized to your specific menu, category mix, and (optionally) competitor context.</p>
+        <p class="note">{t("proof_note", lang)}</p>
       </div>
 
       <div class="section-divider">
         <span class="index">02</span>
-        <span class="label">Who built this</span>
+        <span class="label">{t("who_label", lang)}</span>
         <span class="line"></span>
       </div>
 
       <div class="who-section">
-        <h2>An independent consultant who <em>obsesses</em> over menu economics.</h2>
-        <p>
-          MarginLab is built and run by <strong>Felix Richard</strong>, an independent consultant
-          focused on pricing for food and beverage operators. The model behind this audit combines
-          Lerner-optimal markup theory, menu-engineering quadrants, and demand-calibrated
-          elasticities — packaged into something a café owner can act on the same day.
-        </p>
+        <h2>{t("who_h2_part1", lang)}<em>{t("who_h2_accent", lang)}</em>{t("who_h2_part2", lang)}</h2>
+        <p>{t("who_body", lang)}</p>
       </div>
 
       <div class="cta-strip">
-        <h3>Ready to see your numbers?</h3>
-        <p>Free, takes five minutes, no account required.</p>
+        <h3>{t("cta_strip_h3", lang)}</h3>
+        <p>{t("cta_strip_p", lang)}</p>
     </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Bottom CTA
-    cta_col1, cta_col2, cta_col3 = st.columns([2, 2, 2])
-    with cta_col2:
-        if st.button("Get my free audit", type="primary", use_container_width=True, key="cta_bottom"):
+    # Bottom CTA — centered properly
+    cta_x, cta_y, cta_z = st.columns([2, 3, 2])
+    with cta_y:
+        if st.button(t("cta_get", lang) + "  →", type="primary",
+                     use_container_width=True, key="cta_bottom"):
             track("cta_bottom_click")
             st.session_state.view = "owner_audit"
             st.rerun()
 
     # Footer
-    st.markdown("""
+    st.markdown(f"""
     <div class="landing-wrap" style="padding-top:0">
       <div class="landing-footer">
         <div class="row1">
           © MarginLab · <a href="mailto:felixrichard1208@gmail.com">felixrichard1208@gmail.com</a>
         </div>
         <div class="row1" style="font-size:12px;color:var(--slate)">
-          We only use your email to send your audit report and follow-ups. We never share it.
+          {t("footer_data_note", lang)}
         </div>
         <div class="row2">
-          <a href="?view=consultant" style="font-size:11px">Consultant access →</a>
+          <a href="?view=consultant" style="font-size:11px">{t("footer_consultant", lang)}</a>
         </div>
       </div>
     </div>
     """, unsafe_allow_html=True)
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # OWNER AUDIT VIEW (Quick Audit)
@@ -1046,24 +1082,39 @@ def render_landing():
 
 def render_owner_audit():
     """Owner-facing audit form — three labeled section cards, PDF-only delivery."""
+    lang = st.session_state.lang
     # Wrap whole form
     st.markdown('<div class="form-wrap">', unsafe_allow_html=True)
 
     # Header
-    st.markdown("""
+    st.markdown(f"""
     <div class="ml-header">
-      <div class="eyebrow">Pricing Audit · Free</div>
-      <h1>Tell us about <em>your menu</em>.</h1>
-      <p>Enter your items below. We'll run the model and email your PDF report in about thirty seconds.</p>
+      <div class="eyebrow">{t("owner_header_eyebrow", lang)}</div>
+      <h1>{t("owner_header_h1_part1", lang)}<em>{t("owner_header_h1_accent", lang)}</em>{t("owner_header_h1_part2", lang)}</h1>
+      <p>{t("owner_header_p", lang)}</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # Back button
-    if st.button("← Back to home", key="owner_back"):
-        st.session_state.view = "landing"
-        st.session_state.audit_result = None
-        st.session_state.email_submitted = False
-        st.rerun()
+    # Back + Language toggle row
+    bc1, bc2, bc3 = st.columns([2, 4, 2])
+    with bc1:
+        if st.button(t("back_home", lang), key="owner_back"):
+            st.session_state.view = "landing"
+            st.session_state.audit_result = None
+            st.session_state.email_submitted = False
+            st.rerun()
+    with bc3:
+        new_lang = st.selectbox(
+            t("lang_label", lang),
+            options=["en", "id"],
+            format_func=lambda x: "English" if x == "en" else "Bahasa Indonesia",
+            index=0 if lang == "en" else 1,
+            label_visibility="collapsed",
+            key="lang_picker_owner",
+        )
+        if new_lang != lang:
+            st.session_state.lang = new_lang
+            st.rerun()
 
     # If audit already run and email submitted, show success state
     if st.session_state.audit_result is not None and st.session_state.email_submitted:
@@ -1072,54 +1123,53 @@ def render_owner_audit():
         return
 
     # ── SECTION 1: About your café ─────────────────────────────────
-    st.markdown("""
+    st.markdown(f"""
     <div class="form-section">
       <div class="form-section-head">
         <span class="form-section-num">i.</span>
-        <span class="form-section-title">About your café</span>
+        <span class="form-section-title">{t("sec1_title", lang)}</span>
       </div>
-      <p class="form-section-desc">Your café name is optional and only used to personalize the PDF report.</p>
+      <p class="form-section-desc">{t("sec1_desc", lang)}</p>
     </div>
     """, unsafe_allow_html=True)
 
     s1_c1, s1_c2 = st.columns([3, 1])
     with s1_c1:
         cafe_name = st.text_input(
-            "Café name",
+            t("label_cafe_name", lang),
             value=st.session_state.audit_cafe_name,
-            placeholder="e.g. The Daily Grind",
+            placeholder=t("ph_cafe_name", lang),
             label_visibility="visible",
         )
         st.session_state.audit_cafe_name = cafe_name
     with s1_c2:
         cur = st.selectbox(
-            "Currency", CURRENCIES,
+            t("label_currency", lang), CURRENCIES,
             index=CURRENCIES.index(st.session_state.settings["currency"]),
         )
         st.session_state.settings["currency"] = cur
     currency = cur
 
     # ── SECTION 2: Your menu ───────────────────────────────────────
-    st.markdown("""
+    st.markdown(f"""
     <div class="form-section">
       <div class="form-section-head">
         <span class="form-section-num">ii.</span>
-        <span class="form-section-title">Your menu</span>
+        <span class="form-section-title">{t("sec2_title", lang)}</span>
       </div>
-      <p class="form-section-desc">Add at least one item. We need name, cost, current price, and rough monthly units sold.
-      You can add up to thirty items.</p>
+      <p class="form-section-desc">{t("sec2_desc", lang)}</p>
     </div>
     """, unsafe_allow_html=True)
 
     # Menu table headers (visible on desktop, hidden on mobile via CSS)
     st.markdown(f"""
     <div class="menu-table-head">
-      <span>Item name</span>
-      <span>Category</span>
-      <span>Role</span>
-      <span>Cost · {currency}</span>
-      <span>Price · {currency}</span>
-      <span>Units / month</span>
+      <span>{t("col_item_name", lang)}</span>
+      <span>{t("col_category", lang)}</span>
+      <span>{t("col_role", lang)}</span>
+      <span>{t("col_cost", lang)} · {currency}</span>
+      <span>{t("col_price", lang)} · {currency}</span>
+      <span>{t("col_units", lang)}</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1128,43 +1178,42 @@ def render_owner_audit():
     # Add/remove row
     btn_c1, btn_c2, _ = st.columns([1, 1, 5])
     with btn_c1:
-        if st.button("Add another item", key="owner_add") and st.session_state.num_items < 30:
+        if st.button(t("btn_add_item", lang), key="owner_add") and st.session_state.num_items < 30:
             st.session_state.num_items += 1
             st.rerun()
     with btn_c2:
-        if st.button("Remove last", key="owner_rem") and st.session_state.num_items > 1:
+        if st.button(t("btn_remove_last", lang), key="owner_rem") and st.session_state.num_items > 1:
             st.session_state.num_items -= 1
             st.rerun()
 
     # Competitor expander
-    with st.expander("Add competitor prices (optional)"):
-        st.caption("Enter prices from up to three nearby cafés for items where market context matters. Leave blank to skip.")
-        _render_competitor_table()
+    with st.expander(t("expander_comp", lang)):
+        st.caption(t("comp_caption", lang))
+        _render_competitor_table(lang=lang)
 
     # ── SECTION 3: Send the audit ──────────────────────────────────
-    st.markdown("""
+    st.markdown(f"""
     <div class="form-section">
       <div class="form-section-head">
         <span class="form-section-num">iii.</span>
-        <span class="form-section-title">Send the audit</span>
+        <span class="form-section-title">{t("sec3_title", lang)}</span>
       </div>
-      <p class="form-section-desc">Your full PDF report — with item-by-item recommendations, sensitivity analysis,
-      and a sequencing plan — will be in your inbox within a minute.</p>
+      <p class="form-section-desc">{t("sec3_desc", lang)}</p>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown('<div class="email-callout">', unsafe_allow_html=True)
     email_val = st.text_input(
-        "Email address",
-        placeholder="you@yourcafe.com",
+        t("label_email", lang),
+        placeholder=t("ph_email", lang),
         key="owner_email_input",
     )
     st.session_state.audit_owner_email = email_val
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Newsletter opt-in (styled checkbox)
+    # "Notify me when MarginLab updates" — renamed from newsletter
     newsletter = st.checkbox(
-        "Send me Felix's monthly pricing insights (unsubscribe anytime)",
+        t("checkbox_updates", lang),
         value=st.session_state.newsletter_opt_in,
     )
     st.session_state.newsletter_opt_in = newsletter
@@ -1182,7 +1231,7 @@ def render_owner_audit():
     run_col, _ = st.columns([2, 4])
     with run_col:
         run_clicked = st.button(
-            "Email me my audit  →",
+            t("btn_submit", lang),
             type="primary",
             use_container_width=True,
             key="owner_run",
@@ -1206,7 +1255,7 @@ def render_owner_audit():
         ip = get_ip()
         allowed, _ = check_and_record(ip, max_per_hour=5)
         if not allowed:
-            st.error("You've reached the audit limit for this hour. Please try again later, or email felixrichard1208@gmail.com if you need more.")
+            st.error(t("err_rate_limit", lang))
             st.markdown('</div>', unsafe_allow_html=True)
             return
 
@@ -1214,7 +1263,7 @@ def render_owner_audit():
         items_raw = [st.session_state.menu_items[i] for i in range(st.session_state.num_items)]
         active = [it for it in items_raw if it.get("name", "").strip()]
         if not active:
-            st.error("Please enter at least one menu item before submitting.")
+            st.error(t("err_no_items", lang))
             st.markdown('</div>', unsafe_allow_html=True)
             return
 
@@ -1248,7 +1297,7 @@ def render_owner_audit():
 
         track("form_completed", {"item_count": len(item_inputs), "currency": s["currency"]})
 
-        with st.spinner("Running the model and sending your report…"):
+        with st.spinner(t("spinner_running", lang)):
             result, error = run_audit(settings_input, item_inputs)
             if error:
                 st.error(f"Something went wrong: {error}")
@@ -1274,6 +1323,7 @@ def render_owner_audit():
                     pdf_bytes = generate_pdf(
                         result, s["currency"], cafe_name,
                         calendly_url=_calendly_url(),
+                        lang=lang,
                     )
                     send_consultant_notification(
                         owner_email=email_val, currency=s["currency"],
@@ -1285,9 +1335,9 @@ def render_owner_audit():
                     send_owner_confirmation(
                         owner_email=email_val, cafe_name=cafe_name,
                         currency=s["currency"], audit=result,
-                        pdf_bytes=pdf_bytes,
+                        pdf_bytes=pdf_bytes, lang=lang,
                     )
-                    schedule_followups(owner_email=email_val, cafe_name=cafe_name)
+                    schedule_followups(owner_email=email_val, cafe_name=cafe_name, lang=lang)
                 except Exception:
                     pass
 
@@ -1296,6 +1346,7 @@ def render_owner_audit():
     st.markdown('</div>', unsafe_allow_html=True)  # close form-wrap
 
 def render_owner_success():
+    lang = st.session_state.lang
     audit = st.session_state.audit_result
     currency = st.session_state.audit_currency
     cafe_name = st.session_state.audit_cafe_name
@@ -1304,26 +1355,25 @@ def render_owner_success():
     lift_sign = "+" if audit.monthly_lift >= 0 else ""
     lift_str = f"{lift_sign}{_currency_display(audit.monthly_lift, currency)} {currency}"
     pct_str = _pct_display(audit.lift_pct)
-    display_cafe = cafe_name if cafe_name else "your café"
+    display_cafe = cafe_name if cafe_name else t("success_default_cafe", lang)
 
     st.markdown(f"""
     <div class="owner-success-card">
       <div class="success-icon">✓</div>
-      <h2>Your audit is on its way.</h2>
+      <h2>{t("success_h2", lang)}</h2>
       <p class="lede">
-        We just emailed your full PDF report to <strong>{email}</strong>.<br>
-        Check your inbox in the next minute or two.
+        {t("success_lede_part1", lang)}<strong>{email}</strong>.<br>
+        {t("success_lede_part2", lang)}
       </p>
 
       <div class="success-metric">
-        <div class="label">Estimated lift for {display_cafe}</div>
+        <div class="label">{t("success_metric_label", lang)} {display_cafe}</div>
         <div class="big-number"><em>{lift_str}</em></div>
-        <div class="sub">{pct_str} vs current pricing · monthly</div>
+        <div class="sub">{pct_str} {t("success_metric_sub", lang)}</div>
       </div>
 
       <p class="next-note">
-        The full per-item breakdown, sensitivity analysis, and sequencing plan are in the PDF.<br>
-        Don't see it? Check your spam folder, or email
+        {t("success_next_note", lang)}
         <a href="mailto:felixrichard1208@gmail.com">felixrichard1208@gmail.com</a>.
       </p>
     </div>
@@ -1332,7 +1382,7 @@ def render_owner_success():
     # Reset / new audit
     rc1, rc2, rc3 = st.columns([2, 2, 2])
     with rc2:
-        if st.button("Run another audit", use_container_width=True, key="owner_again"):
+        if st.button(t("btn_run_another", lang), use_container_width=True, key="owner_again"):
             st.session_state.audit_result = None
             st.session_state.email_submitted = False
             st.session_state.audit_owner_email = ""
@@ -1810,12 +1860,12 @@ def _render_menu_table(currency, key_prefix="", headerless=False):
         st.session_state.menu_items[i] = item
 
 
-def _render_competitor_table(key_prefix=""):
+def _render_competitor_table(key_prefix="", lang="en"):
     h = st.columns([3, 1.5, 1.5, 1.5])
-    h[0].markdown("**Item**")
-    h[1].markdown("**Competitor 1**")
-    h[2].markdown("**Competitor 2**")
-    h[3].markdown("**Competitor 3**")
+    h[0].markdown(f"**{t('comp_col_item', lang)}**")
+    h[1].markdown(f"**{t('comp_col_1', lang)}**")
+    h[2].markdown(f"**{t('comp_col_2', lang)}**")
+    h[3].markdown(f"**{t('comp_col_3', lang)}**")
     n_items = st.session_state.num_items
     for i in range(n_items):
         try:
@@ -1885,13 +1935,17 @@ def _render_results_table(df: pd.DataFrame) -> str:
 # ROUTING
 # ══════════════════════════════════════════════════════════════════════════════
 
-# Query param override (e.g. ?view=consultant)
+# Query param override (e.g. ?view=consultant, ?lang=id)
 try:
     qp = st.query_params
     if "view" in qp:
         requested = qp["view"]
         if requested in ("landing", "owner_audit", "consultant"):
             st.session_state.view = requested
+    if "lang" in qp:
+        requested_lang = qp["lang"]
+        if requested_lang in SUPPORTED_LANGS:
+            st.session_state.lang = requested_lang
 except Exception:
     pass
 
