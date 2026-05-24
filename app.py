@@ -90,8 +90,20 @@ st.markdown("""
     background: var(--cream) !important;
   }
 
-  html, body, [class*="css"], .stMarkdown, p, span, div, button, input, label {
+  html, body, [class*="css"], .stMarkdown, p, div, button, input, label {
     font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+  /* Spans that aren't icon containers — never override the Material Symbols font */
+  span:not([data-testid*="Icon"]):not([class*="material-symbols"]):not([class*="MaterialSymbols"]):not([data-testid*="Material"]) {
+    font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+  /* Icon spans — let Streamlit's font win */
+  span[data-testid*="Icon"], span[class*="material-symbols"],
+  span[class*="MaterialSymbols"], span[data-testid*="Material"],
+  [data-testid="stIconMaterial"], [data-testid="stExpanderToggleIcon"] {
+    font-family: "Material Symbols Rounded", "Material Symbols Outlined" !important;
+    font-feature-settings: "liga" !important;
+    -webkit-font-feature-settings: "liga" !important;
   }
 
   /* Streamlit chrome */
@@ -159,7 +171,7 @@ st.markdown("""
   .landing-hero {
     text-align: left;
     max-width: 760px;
-    margin: 0 0 80px;
+    margin: 0 0 96px;
   }
   .hero-eyebrow {
     display: inline-flex;
@@ -169,7 +181,7 @@ st.markdown("""
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
   .hero-eyebrow::before {
     content: "";
@@ -181,7 +193,7 @@ st.markdown("""
     line-height: 1.02;
     font-weight: 500;
     color: var(--ink);
-    margin: 0 0 28px;
+    margin: 0 0 24px;
     letter-spacing: -0.025em;
   }
   .landing-hero h1 em {
@@ -193,7 +205,7 @@ st.markdown("""
     font-size: 19px;
     line-height: 1.55;
     color: var(--ink-mid);
-    margin: 0 0 36px;
+    margin: 0 0 20px;
     max-width: 580px;
     font-family: "Geist", sans-serif !important;
     font-weight: 400;
@@ -201,7 +213,7 @@ st.markdown("""
   .hero-bullets {
     display: flex; gap: 28px;
     font-size: 13px; color: var(--slate);
-    margin-top: 24px;
+    margin: 0 0 32px;
     flex-wrap: wrap;
   }
   .hero-bullets span {
@@ -211,6 +223,30 @@ st.markdown("""
     content: "·"; color: var(--ochre); font-size: 18px;
   }
   .hero-bullets span:first-child::before { content: none; }
+  /* In-hero CTA link styled as button (replaces orphaned Streamlit button) */
+  a.hero-cta, .hero-cta {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink) !important;
+    color: var(--cream) !important;
+    padding: 14px 28px !important;
+    border-radius: 8px !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    border-bottom: none !important;
+    box-shadow: var(--shadow);
+    transition: all 0.18s ease;
+    font-family: "Geist", sans-serif !important;
+  }
+  a.hero-cta:hover, .hero-cta:hover {
+    background: var(--ink-soft) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+    color: var(--cream) !important;
+    text-decoration: none !important;
+  }
 
   /* CTA buttons — override Streamlit button */
   .stButton > button {
@@ -245,10 +281,10 @@ st.markdown("""
     box-shadow: var(--shadow-lg) !important;
   }
 
-  /* How it works */
+  /* Section dividers — sit centered vertically in the 96px gap */
   .section-divider {
     display: flex; align-items: center; gap: 16px;
-    margin: 64px 0 32px;
+    margin: 96px 0 40px;
   }
   .section-divider .label {
     font-family: "Fraunces", serif !important;
@@ -272,6 +308,8 @@ st.markdown("""
     border: 1px solid var(--line);
     border-radius: 12px;
     overflow: hidden;
+    /* tight 40px to proof-panel — read as a paired unit */
+    margin-bottom: 40px;
   }
   .how-card {
     background: var(--paper);
@@ -303,7 +341,7 @@ st.markdown("""
     color: var(--cream);
     border-radius: 16px;
     padding: 48px;
-    margin: 64px 0;
+    margin: 0;
     position: relative;
     overflow: hidden;
   }
@@ -325,7 +363,7 @@ st.markdown("""
   .proof-panel h2 {
     font-family: "Fraunces", serif !important;
     font-weight: 500; font-size: 32px;
-    margin: 0 0 32px;
+    margin: 0 0 44px;
     letter-spacing: -0.015em;
     color: var(--cream);
   }
@@ -363,7 +401,7 @@ st.markdown("""
   /* Who block */
   .who-section {
     max-width: 720px;
-    margin: 64px auto;
+    margin: 0 auto;
     padding: 0;
   }
   .who-section h2 {
@@ -385,7 +423,7 @@ st.markdown("""
   /* Bottom CTA strip */
   .cta-strip {
     text-align: center;
-    margin: 64px 0 32px;
+    margin: 0;
     padding: 48px;
     background: var(--cream-deep);
     border-radius: 16px;
@@ -470,20 +508,31 @@ st.markdown("""
     max-width: 580px;
   }
 
-  /* Form section blocks (1 / 2 / 3) */
-  .form-section {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 32px;
-    margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
+  /* ── Form: Option B — bare sections on cream, HR dividers ──────────── */
+  /* We removed .form-card entirely. Sections live directly on the page.
+     The "form-wrap" is just a max-width constraint (no visual chrome). */
+  .form-sub {
+    padding-top: 56px;
+    margin-top: 56px;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .form-sub.first {
+    padding-top: 0;
+    margin-top: 16px;
+    border-top: none;
+  }
+  /* Small ochre tick above each non-first section, visually anchoring the divider */
+  .form-sub:not(.first)::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: 0;
+    width: 32px; height: 2px;
+    background: var(--ochre);
   }
   .form-section-head {
-    display: flex; align-items: baseline; gap: 16px;
-    margin-bottom: 8px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 6px;
   }
   .form-section-num {
     font-family: "Fraunces", serif !important;
@@ -494,15 +543,39 @@ st.markdown("""
   }
   .form-section-title {
     font-family: "Fraunces", serif !important;
-    font-weight: 500; font-size: 22px;
+    font-weight: 500; font-size: 24px;
     color: var(--ink);
     letter-spacing: -0.015em;
-    line-height: 1;
+    line-height: 1.1;
   }
   .form-section-desc {
     font-size: 13.5px; color: var(--ink-mid);
-    margin: 14px 0 22px;
-    line-height: 1.5;
+    margin: 8px 0 28px;
+    line-height: 1.55;
+    max-width: 680px;
+  }
+  /* Cap the "Add / Remove" buttons so they don't dominate */
+  div[data-testid="column"] .stButton > button[kind="secondary"],
+  div[data-testid="column"] .stButton > button:not([kind="primary"]) {
+    max-width: 180px;
+  }
+  /* Submit button gets emphasis */
+  .submit-wrap {
+    max-width: 480px;
+    margin: 40px auto 0;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+  .submit-wrap .stButton > button[kind="primary"] {
+    max-width: none !important;
+    padding: 14px 28px !important;
+    font-size: 15px !important;
+  }
+  /* Make sure form-wrap doesn't add extra chrome */
+  .form-wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 16px 24px 80px;
   }
 
   /* Style Streamlit inputs to match */
@@ -583,31 +656,29 @@ st.markdown("""
     margin-bottom: 8px;
   }
 
-  /* Expander (competitor prices)
-     Target only the visible header div, NOT 'summary' (modern Streamlit doesn't use
-     summary tags but does use button + nested spans, and our previous selector caused
-     the chevron icon text "arrow_right" to leak through). */
+  /* Expander (competitor prices) — the Material font fix above restores the
+     chevron glyph. Now we only style the surrounding chrome. */
   [data-testid="stExpander"] {
     background: var(--cream);
     border: 1px solid var(--line);
     border-radius: 8px;
-    margin: 8px 0;
+    margin: 12px 0;
   }
-  [data-testid="stExpander"] > details > summary,
-  [data-testid="stExpander"] details summary,
+  [data-testid="stExpander"] summary,
+  [data-testid="stExpander"] details > summary,
   [data-testid="stExpander"] button[aria-expanded] {
-    padding: 12px 16px !important;
-    font-family: "Geist", sans-serif !important;
-    font-weight: 500 !important;
+    padding: 14px 18px !important;
     color: var(--ink) !important;
     font-size: 14px !important;
     background: transparent !important;
     border: none !important;
   }
-  /* Hide raw material-icon ligature text spilling out */
-  [data-testid="stExpander"] [data-testid="stIconMaterial"]::after,
-  [data-testid="stExpander"] [data-testid="stIcon"]::after {
-    content: none !important;
+  /* Make the text label inside the expander use Geist; the icon stays Material */
+  [data-testid="stExpander"] summary p,
+  [data-testid="stExpander"] button[aria-expanded] p {
+    font-family: "Geist", sans-serif !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
   }
 
   /* Run button — extra emphasis */
@@ -850,7 +921,7 @@ st.markdown("""
     .proof-panel { padding: 32px 24px; }
     .proof-panel h2 { font-size: 26px; }
     .form-wrap { padding: 8px 14px 60px; }
-    .form-section { padding: 24px 18px; }
+    .form-card { padding: 24px 18px; } .form-sub { padding-top: 32px; margin-top: 32px; }
     .menu-table-head { display: none; }
     .ml-header { padding: 22px 22px; }
     .ml-header h1 { font-size: 24px; }
@@ -926,7 +997,7 @@ def render_landing():
 
     lang = st.session_state.lang
 
-    # ── Nav (brand + language toggle on the right) ─────────────────────────
+    # ── Nav (brand + built-for line) ───────────────────────────────────────
     st.markdown(f"""
     <div class="landing-wrap">
       <div class="landing-nav">
@@ -938,13 +1009,13 @@ def render_landing():
           </div>
         </div>
         <div class="nav-right">
-          <div class="nav-tagline" style="font-style:italic;margin-right:18px">{t("nav_built_for", lang)}</div>
+          <div class="nav-tagline" style="font-style:italic">{t("nav_built_for", lang)}</div>
         </div>
       </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Language toggle (Streamlit widget — placed in top-right via columns)
+    # Language toggle (Streamlit widget; visually slim, top-right)
     lang_c1, lang_c2 = st.columns([7, 1])
     with lang_c2:
         new_lang = st.selectbox(
@@ -959,10 +1030,10 @@ def render_landing():
             st.session_state.lang = new_lang
             st.rerun()
 
-    # ── Hero ───────────────────────────────────────────────────────────────
+    # ── Hero — CTA is inline <a>, not a Streamlit button (rhythm fix) ──────
     st.markdown(f"""
     <div class="landing-wrap" style="padding-top:0">
-      <div class="landing-hero">
+      <div class="landing-hero" data-reveal>
         <div class="hero-eyebrow">{t("hero_eyebrow", lang)}</div>
         <h1>{t("hero_h1_part1", lang)}<em>{t("hero_h1_accent", lang)}</em>{t("hero_h1_part2", lang)}</h1>
         <p class="sub">{t("hero_sub", lang)}</p>
@@ -972,47 +1043,36 @@ def render_landing():
           <span>{t("hero_bullet_3", lang)}</span>
           <span>{t("hero_bullet_4", lang)}</span>
         </div>
+        <a class="hero-cta" href="?view=owner_audit&lang={lang}">
+          {t("cta_start", lang)} →
+        </a>
       </div>
-    </div>
-    """, unsafe_allow_html=True)
 
-    # Primary CTA — left-aligned but properly sized so it doesn't look orphaned
-    cta_a, cta_b = st.columns([2, 6])
-    with cta_a:
-        if st.button(t("cta_start", lang) + "  →", type="primary",
-                     use_container_width=True, key="cta_start_top"):
-            track("cta_start_audit_click")
-            st.session_state.view = "owner_audit"
-            st.rerun()
-
-    # ── How it works ───────────────────────────────────────────────────────
-    st.markdown(f"""
-    <div class="landing-wrap" style="padding-top:0;padding-bottom:0">
-      <div class="section-divider">
+      <div class="section-divider" data-reveal>
         <span class="index">01</span>
         <span class="label">{t("how_label", lang)}</span>
         <span class="line"></span>
       </div>
 
-      <div class="how-grid">
-        <div class="how-card">
+      <div class="how-grid" data-reveal-group>
+        <div class="how-card" data-reveal data-delay="0">
           <div class="how-step">i.</div>
           <h3>{t("how_1_title", lang)}</h3>
           <p>{t("how_1_body", lang)}</p>
         </div>
-        <div class="how-card">
+        <div class="how-card" data-reveal data-delay="80">
           <div class="how-step">ii.</div>
           <h3>{t("how_2_title", lang)}</h3>
           <p>{t("how_2_body", lang)}</p>
         </div>
-        <div class="how-card">
+        <div class="how-card" data-reveal data-delay="160">
           <div class="how-step">iii.</div>
           <h3>{t("how_3_title", lang)}</h3>
           <p>{t("how_3_body", lang)}</p>
         </div>
       </div>
 
-      <div class="proof-panel">
+      <div class="proof-panel" data-reveal>
         <div class="pp-label">{t("proof_label", lang)}</div>
         <h2>{t("proof_h2_part1", lang)}<em>{t("proof_h2_accent", lang)}</em>{t("proof_h2_part2", lang)}</h2>
         <div class="pp-metrics">
@@ -1032,37 +1092,26 @@ def render_landing():
         <p class="note">{t("proof_note", lang)}</p>
       </div>
 
-      <div class="section-divider">
+      <div class="section-divider" data-reveal>
         <span class="index">02</span>
         <span class="label">{t("who_label", lang)}</span>
         <span class="line"></span>
       </div>
 
-      <div class="who-section">
+      <div class="who-section" data-reveal>
         <h2>{t("who_h2_part1", lang)}<em>{t("who_h2_accent", lang)}</em>{t("who_h2_part2", lang)}</h2>
         <p>{t("who_body", lang)}</p>
       </div>
 
-      <div class="cta-strip">
+      <div class="cta-strip" data-reveal style="margin-top:96px">
         <h3>{t("cta_strip_h3", lang)}</h3>
         <p>{t("cta_strip_p", lang)}</p>
-    </div>
-    </div>
-    """, unsafe_allow_html=True)
+        <a class="hero-cta" href="?view=owner_audit&lang={lang}">
+          {t("cta_get", lang)} →
+        </a>
+      </div>
 
-    # Bottom CTA — centered properly
-    cta_x, cta_y, cta_z = st.columns([2, 3, 2])
-    with cta_y:
-        if st.button(t("cta_get", lang) + "  →", type="primary",
-                     use_container_width=True, key="cta_bottom"):
-            track("cta_bottom_click")
-            st.session_state.view = "owner_audit"
-            st.rerun()
-
-    # Footer
-    st.markdown(f"""
-    <div class="landing-wrap" style="padding-top:0">
-      <div class="landing-footer">
+      <div class="landing-footer" data-reveal>
         <div class="row1">
           © MarginLab · <a href="mailto:felixrichard1208@gmail.com">felixrichard1208@gmail.com</a>
         </div>
@@ -1074,6 +1123,74 @@ def render_landing():
         </div>
       </div>
     </div>
+    """, unsafe_allow_html=True)
+
+    # ── Scroll reveal script — vanilla IntersectionObserver, one-time guarded ──
+    st.markdown("""
+    <script>
+    (function() {
+      if (window._marginlabScrollInit) return;
+      window._marginlabScrollInit = true;
+
+      const prefersReduced = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // CSS uses opacity:0 but NOT display:none — layout is preserved.
+      // Hard fallback below will mark everything visible after 2s even if IO never fires.
+      if (!document.getElementById('marginlab-reveal-css')) {
+        const style = document.createElement('style');
+        style.id = 'marginlab-reveal-css';
+        style.textContent = `
+          [data-reveal] {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+          }
+          [data-reveal].is-visible {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          @media (prefers-reduced-motion: reduce) {
+            [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      const bind = () => {
+        const targets = document.querySelectorAll('[data-reveal]:not(.is-visible)');
+        if (targets.length === 0) return;
+        if (prefersReduced || !('IntersectionObserver' in window)) {
+          targets.forEach(el => el.classList.add('is-visible'));
+          return;
+        }
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const delay = parseInt(entry.target.getAttribute('data-delay') || '0', 10);
+              setTimeout(() => entry.target.classList.add('is-visible'), delay);
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+        targets.forEach(el => io.observe(el));
+      };
+
+      // Bind now and on short delays (Streamlit may inject content async).
+      bind();
+      setTimeout(bind, 250);
+      setTimeout(bind, 800);
+
+      // HARD FALLBACK: after 2s, show anything still hidden (safety net).
+      setTimeout(() => {
+        document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach(el => {
+          el.classList.add('is-visible');
+        });
+      }, 2000);
+    })();
+    </script>
     """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1122,9 +1239,9 @@ def render_owner_audit():
         st.markdown('</div>', unsafe_allow_html=True)
         return
 
-    # ── SECTION 1: About your café ─────────────────────────────────
+    # ── Section i — bare on cream, divider above each subsequent section ──
     st.markdown(f"""
-    <div class="form-section">
+    <div class="form-sub first">
       <div class="form-section-head">
         <span class="form-section-num">i.</span>
         <span class="form-section-title">{t("sec1_title", lang)}</span>
@@ -1150,9 +1267,9 @@ def render_owner_audit():
         st.session_state.settings["currency"] = cur
     currency = cur
 
-    # ── SECTION 2: Your menu ───────────────────────────────────────
+    # ── Section ii ─────────────────────────────────────────────────
     st.markdown(f"""
-    <div class="form-section">
+    <div class="form-sub">
       <div class="form-section-head">
         <span class="form-section-num">ii.</span>
         <span class="form-section-title">{t("sec2_title", lang)}</span>
@@ -1191,9 +1308,9 @@ def render_owner_audit():
         st.caption(t("comp_caption", lang))
         _render_competitor_table(lang=lang)
 
-    # ── SECTION 3: Send the audit ──────────────────────────────────
+    # ── Section iii ────────────────────────────────────────────────
     st.markdown(f"""
-    <div class="form-section">
+    <div class="form-sub">
       <div class="form-section-head">
         <span class="form-section-num">iii.</span>
         <span class="form-section-title">{t("sec3_title", lang)}</span>
@@ -1226,16 +1343,17 @@ def render_owner_audit():
         label_visibility="collapsed",
     )
 
-    # Submit button
-    st.markdown('<div class="submit-row"></div>', unsafe_allow_html=True)
-    run_col, _ = st.columns([2, 4])
-    with run_col:
+    # Submit row — centered, capped width
+    st.markdown('<div class="submit-wrap submit-row">', unsafe_allow_html=True)
+    sb_a, sb_b, sb_c = st.columns([1, 3, 1])
+    with sb_b:
         run_clicked = st.button(
             t("btn_submit", lang),
             type="primary",
             use_container_width=True,
             key="owner_run",
         )
+    st.markdown('</div>', unsafe_allow_html=True)  # close submit-wrap
 
     if run_clicked:
         # Honeypot — silent no-op
