@@ -38,7 +38,7 @@ from rate_limit import check_and_record, get_ip
 from lite_excel import export_lite_excel
 from analytics import track, identify
 from i18n import t, SUPPORTED_LANGS
-
+from consult_walkthrough import inject_walkthrough_css, render_walkthrough
 
 # ── page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
